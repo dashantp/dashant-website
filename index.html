@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -51,6 +52,8 @@ nav.scrolled{background:rgba(6,6,6,.95);backdrop-filter:blur(12px);padding:18px 
 
 /* ── HERO ── */
 #hero{min-height:100vh;padding:0 64px 80px;display:flex;flex-direction:column;justify-content:flex-end;position:relative;overflow:hidden;}
+@media(max-width:768px){#hero{min-height:unset!important;justify-content:flex-start!important;padding:100px 28px 60px!important;}}
+@media(max-width:480px){#hero{min-height:unset!important;justify-content:flex-start!important;padding:90px 20px 56px!important;}}
 .hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(170,255,0,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(170,255,0,.04) 1px,transparent 1px);background-size:64px 64px;animation:gridPulse 8s ease-in-out infinite;mask-image:radial-gradient(ellipse 90% 80% at 50% 60%,black 20%,transparent 100%);}
 @keyframes gridPulse{0%,100%{opacity:.5}50%{opacity:1}}
 .hero-ghost{position:absolute;bottom:-40px;left:-10px;font-family:var(--display);font-size:clamp(120px,20vw,300px);letter-spacing:-4px;color:transparent;-webkit-text-stroke:1px rgba(170,255,0,.05);pointer-events:none;user-select:none;white-space:nowrap;line-height:1;animation:ghostFloat 12s ease-in-out infinite;}
