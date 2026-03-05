@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Dashant — AI & Media Agency</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Familjen+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --black:#060606;--offblack:#0e0e0e;--lime:#aaff00;
+  --white:#f2f0eb;--grey:#161616;--border:#1e1e1e;--muted:#555;
+  --mono:'JetBrains Mono',monospace;--display:'Bebas Neue',sans-serif;--body:'Familjen Grotesk',sans-serif;
+  --ease-out-expo:cubic-bezier(0.16,1,0.3,1);
+  --ease-in-out:cubic-bezier(0.65,0,0.35,1);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--black);color:var(--white);font-family:var(--body);overflow-x:hidden;cursor:none;}
+
+/* ── CURSOR ── */
+#cur{width:8px;height:8px;background:var(--lime);border-radius:50%;position:fixed;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .3s var(--ease-out-expo),height .3s var(--ease-out-expo),background .3s;mix-blend-mode:difference;}
+#cur-ring{width:40px;height:40px;border:1.5px solid rgba(170,255,0,.4);border-radius:50%;position:fixed;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .4s var(--ease-out-expo),height .4s var(--ease-out-expo),border-color .3s;}
+#cur.hover{width:60px;height:60px;}
+#cur-ring.hover{width:60px;height:60px;border-color:rgba(170,255,0,.15);}
+
+/* ── NOISE ── */
+body::after{content:'';position:fixed;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E");pointer-events:none;z-index:9997;}
+
+/* ── PROGRESS BAR ── */
+#progress{position:fixed;top:0;left:0;height:2px;background:var(--lime);z-index:10000;width:0%;transition:width .1s linear;}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:500;padding:28px 64px;display:flex;align-items:center;justify-content:space-between;transition:background .4s,padding .4s;}
+nav.scrolled{background:rgba(6,6,6,.95);backdrop-filter:blur(12px);padding:18px 64px;}
+.logo{font-family:var(--display);font-size:26px;letter-spacing:5px;color:var(--white);text-decoration:none;transition:opacity .2s;}
+.logo b{color:var(--lime);}
+.logo:hover{opacity:.8;}
+.nav-links{display:flex;gap:36px;list-style:none;}
+.nav-links a{font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s;position:relative;}
+.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;right:0;height:1px;background:var(--lime);transform:scaleX(0);transform-origin:left;transition:transform .3s var(--ease-out-expo);}
+.nav-links a:hover{color:var(--white);}
+.nav-links a:hover::after{transform:scaleX(1);}
+.nav-btn{font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--black);background:var(--lime);padding:12px 24px;text-decoration:none;transition:all .3s var(--ease-out-expo);position:relative;overflow:hidden;}
+.nav-btn::before{content:'';position:absolute;inset:0;background:var(--white);transform:scaleX(0);transform-origin:right;transition:transform .3s var(--ease-out-expo);}
+.nav-btn span{position:relative;z-index:1;}
+.nav-btn:hover::before{transform:scaleX(1);}
+
+/* ── CURRENCY BADGE ── */
+.currency-badge{position:fixed;bottom:28px;left:28px;z-index:500;font-family:var(--mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--black);background:var(--lime);padding:8px 14px;opacity:0;transform:translateY(10px);transition:opacity .5s,transform .5s var(--ease-out-expo);pointer-events:none;}
+.currency-badge.show{opacity:1;transform:translateY(0);}
+
+/* ── HERO ── */
+#hero{min-height:100vh;padding:0 64px 80px;display:flex;flex-direction:column;justify-content:flex-end;position:relative;overflow:hidden;}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(170,255,0,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(170,255,0,.04) 1px,transparent 1px);background-size:64px 64px;animation:gridPulse 8s ease-in-out infinite;mask-image:radial-gradient(ellipse 90% 80% at 50% 60%,black 20%,transparent 100%);}
+@keyframes gridPulse{0%,100%{opacity:.5}50%{opacity:1}}
+.hero-ghost{position:absolute;bottom:-40px;left:-10px;font-family:var(--display);font-size:clamp(120px,20vw,300px);letter-spacing:-4px;color:transparent;-webkit-text-stroke:1px rgba(170,255,0,.05);pointer-events:none;user-select:none;white-space:nowrap;line-height:1;animation:ghostFloat 12s ease-in-out infinite;}
+@keyframes ghostFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-20px)}}
+
+/* floating orbs */
+.orb{position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none;animation:orbFloat var(--dur,14s) ease-in-out infinite;}
+.orb-1{width:400px;height:400px;background:rgba(170,255,0,.06);top:10%;right:5%;--dur:14s;}
+.orb-2{width:300px;height:300px;background:rgba(170,255,0,.04);bottom:20%;left:10%;--dur:18s;animation-delay:-6s;}
+@keyframes orbFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-40px) scale(1.05)}}
+
+.hero-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--lime);margin-bottom:28px;display:flex;align-items:center;gap:12px;opacity:0;animation:slideUp .8s var(--ease-out-expo) .2s forwards;}
+.hero-eyebrow::before{content:'';width:28px;height:1px;background:var(--lime);}
+.hero-dot{display:inline-block;width:6px;height:6px;background:var(--lime);border-radius:50%;animation:blink 2s ease-in-out infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+h1.hero-head{font-family:var(--display);font-size:clamp(68px,10.5vw,150px);line-height:.9;text-transform:uppercase;letter-spacing:-.5px;max-width:1100px;opacity:0;animation:slideUp .8s var(--ease-out-expo) .4s forwards;}
+h1.hero-head mark{background:none;color:var(--lime);position:relative;display:inline-block;}
+h1.hero-head mark::after{content:'';position:absolute;bottom:4px;left:0;right:0;height:4px;background:var(--lime);opacity:.3;transform:scaleX(0);animation:lineReveal 1s var(--ease-out-expo) 1.2s forwards;}
+@keyframes lineReveal{to{transform:scaleX(1)}}
+
+.hero-bottom{display:flex;justify-content:space-between;align-items:flex-end;margin-top:64px;gap:40px;opacity:0;animation:slideUp .8s var(--ease-out-expo) .6s forwards;position:relative;z-index:1;}
+.hero-sub{font-size:17px;line-height:1.75;color:#888;max-width:440px;}
+.hero-sub strong{color:var(--white);}
+.hero-cta{display:inline-flex;align-items:center;gap:14px;font-family:var(--display);font-size:20px;letter-spacing:3px;text-transform:uppercase;color:var(--black);background:var(--lime);padding:22px 44px;text-decoration:none;flex-shrink:0;position:relative;overflow:hidden;transition:color .3s;}
+.hero-cta::before{content:'';position:absolute;inset:0;background:var(--white);transform:translateX(-101%);transition:transform .4s var(--ease-out-expo);}
+.hero-cta:hover::before{transform:translateX(0);}
+.hero-cta span{position:relative;z-index:1;}
+.arrow-anim{display:inline-block;transition:transform .3s var(--ease-out-expo);}
+.hero-cta:hover .arrow-anim{transform:translateX(6px);}
+
+/* hero scroll indicator */
+.scroll-hint{position:absolute;bottom:32px;right:64px;display:flex;flex-direction:column;align-items:center;gap:8px;opacity:0;animation:fadeIn 1s ease 1.5s forwards;}
+@keyframes fadeIn{to{opacity:1}}
+.scroll-line{width:1px;height:60px;background:linear-gradient(to bottom,transparent,var(--lime));animation:scrollLine 2s ease-in-out infinite;}
+@keyframes scrollLine{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform:scaleY(1);transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+.scroll-text{font-family:var(--mono);font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);writing-mode:vertical-rl;}
+
+/* ── TICKER ── */
+.ticker{background:var(--lime);padding:16px 0;overflow:hidden;position:relative;z-index:1;}
+.ticker-track{display:flex;width:max-content;animation:tick 28s linear infinite;}
+.ticker-track:hover{animation-play-state:paused;}
+.ticker-item{font-family:var(--mono);font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--black);padding:0 32px;white-space:nowrap;}
+.sep{opacity:.35;margin:0 8px;}
+@keyframes tick{to{transform:translateX(-50%);}}
+
+/* ── SHARED ── */
+.sec-label{font-family:var(--mono);font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--lime);margin-bottom:20px;display:flex;align-items:center;gap:12px;}
+.sec-label::before{content:'';width:24px;height:1px;background:var(--lime);}
+.sec-head{font-family:var(--display);font-size:clamp(52px,7vw,96px);line-height:.92;text-transform:uppercase;letter-spacing:-.5px;}
+.section-top{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:72px;}
+.sec-desc{max-width:380px;font-size:15px;line-height:1.8;color:var(--muted);align-self:flex-end;}
+
+/* ── SCROLL ANIMATIONS ── */
+@keyframes slideUp{from{opacity:0;transform:translateY(50px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideLeft{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
+@keyframes slideRight{from{opacity:0;transform:translateX(-40px)}to{opacity:1;transform:translateX(0)}}
+@keyframes scaleIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+
+.reveal{opacity:0;transform:translateY(60px);transition:opacity .9s var(--ease-out-expo),transform .9s var(--ease-out-expo);}
+.reveal.on{opacity:1;transform:translateY(0);}
+.reveal-left{opacity:0;transform:translateX(-60px);transition:opacity .9s var(--ease-out-expo),transform .9s var(--ease-out-expo);}
+.reveal-left.on{opacity:1;transform:translateX(0);}
+.reveal-right{opacity:0;transform:translateX(60px);transition:opacity .9s var(--ease-out-expo),transform .9s var(--ease-out-expo);}
+.reveal-right.on{opacity:1;transform:translateX(0);}
+.reveal-scale{opacity:0;transform:scale(.94);transition:opacity .9s var(--ease-out-expo),transform .9s var(--ease-out-expo);}
+.reveal-scale.on{opacity:1;transform:scale(1);}
+.d1{transition-delay:.1s!important}.d2{transition-delay:.18s!important}.d3{transition-delay:.26s!important}.d4{transition-delay:.34s!important}.d5{transition-delay:.42s!important}
+
+/* ── PAIN ── */
+#pain{padding:120px 64px;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;border-bottom:1px solid var(--border);}
+.pain-label{font-family:var(--mono);font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--lime);margin-bottom:28px;display:flex;align-items:center;gap:10px;}
+.pain-label::before{content:'';width:24px;height:1px;background:var(--lime);}
+.pain-head{font-family:var(--display);font-size:clamp(44px,6vw,80px);line-height:.95;text-transform:uppercase;letter-spacing:-.5px;}
+.pain-head mark{background:none;color:var(--lime);}
+.pain-right{display:flex;flex-direction:column;gap:2px;}
+.pain-item{padding:28px 32px;border-left:3px solid transparent;background:var(--offblack);transition:all .4s var(--ease-out-expo);margin-bottom:2px;position:relative;overflow:hidden;}
+.pain-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--lime);transform:scaleY(0);transform-origin:bottom;transition:transform .4s var(--ease-out-expo);}
+.pain-item:hover{background:#111;transform:translateX(6px);}
+.pain-item:hover::before{transform:scaleY(1);}
+.pain-item-title{font-weight:700;font-size:16px;margin-bottom:8px;color:var(--white);}
+.pain-item-desc{font-size:14px;line-height:1.75;color:var(--muted);}
+
+/* ══════════════════════════════════
+   SERVICES WITH VISUAL MOCKUPS
+══════════════════════════════════ */
+#content-marketing{padding:120px 64px;background:var(--black);}
+#services-ai{padding:0 64px 120px;background:var(--black);}
+
+.service-full{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;padding:80px 0;border-top:1px solid var(--border);}
+.service-full.reverse{direction:rtl;}
+.service-full.reverse>*{direction:ltr;}
+.service-info{display:flex;flex-direction:column;gap:20px;}
+.service-num-label{font-family:var(--mono);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--lime);opacity:.7;}
+.service-arm-badge{display:inline-flex;font-family:var(--mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--black);background:var(--lime);padding:5px 12px;width:fit-content;}
+.service-title{font-family:var(--display);font-size:clamp(40px,5vw,68px);text-transform:uppercase;line-height:.95;letter-spacing:-.5px;}
+.service-desc{font-size:15px;line-height:1.85;color:var(--muted);max-width:420px;}
+.service-features{display:flex;flex-direction:column;gap:8px;margin-top:4px;}
+.service-feature{display:flex;align-items:center;gap:10px;font-size:13px;color:#777;}
+.service-feature::before{content:'';width:6px;height:6px;background:var(--lime);border-radius:50%;flex-shrink:0;}
+.service-outcome{font-family:var(--mono);font-size:11px;color:var(--lime);letter-spacing:1px;padding:12px 0;border-top:1px solid var(--border);}
+.service-outcome::before{content:'↳ ';}
+.service-cta-link{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--white);text-decoration:none;transition:color .2s;}
+.service-cta-link:hover{color:var(--lime);}
+.service-cta-link .arr{transition:transform .3s var(--ease-out-expo);}
+.service-cta-link:hover .arr{transform:translateX(6px);}
+
+/* ── VISUAL MOCKUPS ── */
+.mockup-wrap{position:relative;border-radius:0;overflow:visible;}
+
+/* PHONE MOCKUP — Short Form */
+.phone-mockup{width:240px;height:420px;background:#111;border-radius:32px;border:2px solid #222;position:relative;overflow:hidden;margin:0 auto;box-shadow:0 40px 80px rgba(0,0,0,.6);}
+.phone-screen{position:absolute;inset:8px;border-radius:24px;background:#000;overflow:hidden;}
+.phone-reel{position:absolute;inset:0;background:linear-gradient(160deg,#0a1a00,#000);display:flex;flex-direction:column;justify-content:flex-end;padding:16px;}
+.reel-hook{font-family:var(--display);font-size:18px;text-transform:uppercase;color:var(--white);line-height:1.1;margin-bottom:8px;letter-spacing:.5px;}
+.reel-hook span{color:var(--lime);}
+.reel-bar{height:2px;background:var(--border);border-radius:2px;margin-bottom:12px;}
+.reel-progress{height:2px;width:65%;background:var(--lime);border-radius:2px;animation:progress 3s ease-in-out infinite;}
+@keyframes progress{0%{width:20%}50%{width:80%}100%{width:20%}}
+.reel-stats{display:flex;gap:12px;}
+.reel-stat{font-family:var(--mono);font-size:9px;letter-spacing:1px;color:var(--muted);}
+.reel-stat b{color:var(--lime);}
+.phone-notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:80px;height:20px;background:#111;border-radius:0 0 16px 16px;z-index:2;}
+.reel-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,rgba(0,0,0,.8));pointer-events:none;}
+.reel-visual{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;}
+.reel-bg{width:100%;height:100%;background:linear-gradient(135deg,#001800,#003300);display:flex;align-items:center;justify-content:center;}
+.reel-play{width:50px;height:50px;border:2px solid rgba(170,255,0,.6);border-radius:50%;display:flex;align-items:center;justify-content:center;animation:playPulse 2s ease-in-out infinite;}
+@keyframes playPulse{0%,100%{box-shadow:0 0 0 0 rgba(170,255,0,.3)}50%{box-shadow:0 0 0 16px rgba(170,255,0,0)}}
+.reel-play-icon{width:0;height:0;border-left:18px solid var(--lime);border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:4px;}
+
+/* floating phone badges */
+.phone-badge{position:absolute;background:var(--lime);padding:6px 12px;font-family:var(--mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--black);font-weight:500;animation:badgeFloat 4s ease-in-out infinite;}
+.phone-badge-1{top:-16px;right:-20px;animation-delay:0s;}
+.phone-badge-2{bottom:40px;left:-30px;animation-delay:-2s;}
+@keyframes badgeFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+/* LAPTOP MOCKUP — YouTube */
+.laptop-mockup{width:100%;max-width:460px;margin:0 auto;}
+.laptop-screen-wrap{background:#111;border-radius:10px 10px 0 0;border:2px solid #222;padding:16px;position:relative;overflow:hidden;}
+.laptop-topbar{display:flex;gap:6px;margin-bottom:12px;}
+.dot-red,.dot-yellow,.dot-green{width:10px;height:10px;border-radius:50%;}
+.dot-red{background:#ff5f57;}.dot-yellow{background:#febc2e;}.dot-green{background:#28c840;}
+.yt-player{width:100%;aspect-ratio:16/9;background:#000;border-radius:4px;position:relative;overflow:hidden;}
+.yt-thumbnail{width:100%;height:100%;background:linear-gradient(135deg,#001800,#00260a);display:flex;align-items:center;justify-content:center;position:relative;}
+.yt-play{width:44px;height:44px;background:rgba(170,255,0,.9);border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.yt-play-icon{width:0;height:0;border-left:16px solid var(--black);border-top:10px solid transparent;border-bottom:10px solid transparent;margin-left:3px;}
+.yt-timeline{padding:10px 0 0;}
+.yt-title{font-family:var(--display);font-size:15px;text-transform:uppercase;color:var(--white);margin-bottom:6px;letter-spacing:.5px;}
+.yt-title span{color:var(--lime);}
+.yt-meta{font-family:var(--mono);font-size:8px;letter-spacing:1px;color:var(--muted);margin-bottom:8px;}
+.yt-progress-wrap{height:3px;background:var(--border);border-radius:2px;position:relative;}
+.yt-progress-fill{position:absolute;left:0;top:0;bottom:0;width:42%;background:var(--lime);border-radius:2px;}
+.yt-chapters{display:flex;gap:2px;margin-top:8px;}
+.yt-chapter{flex:1;height:3px;background:var(--border);border-radius:1px;}
+.yt-chapter.active{background:var(--lime);}
+.laptop-base{height:16px;background:#1a1a1a;border-radius:0 0 6px 6px;}
+.laptop-stand{height:8px;width:40%;background:#111;border-radius:0 0 8px 8px;margin:0 auto;}
+/* retention graph overlay */
+.retention-graph{position:absolute;bottom:40px;right:-20px;background:rgba(10,10,10,.92);border:1px solid var(--border);padding:10px 14px;width:140px;}
+.rg-label{font-family:var(--mono);font-size:8px;letter-spacing:1px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;}
+.rg-bars{display:flex;align-items:flex-end;gap:3px;height:40px;}
+.rg-bar{flex:1;background:var(--lime);opacity:.7;border-radius:1px 1px 0 0;animation:barGrow 3s ease-in-out infinite;}
+.rg-bar:nth-child(1){height:90%;animation-delay:0s;}
+.rg-bar:nth-child(2){height:85%;animation-delay:.1s;}
+.rg-bar:nth-child(3){height:80%;animation-delay:.2s;}
+.rg-bar:nth-child(4){height:70%;animation-delay:.3s;}
+.rg-bar:nth-child(5){height:75%;animation-delay:.4s;}
+.rg-bar:nth-child(6){height:82%;animation-delay:.5s;}
+.rg-bar:nth-child(7){height:78%;animation-delay:.6s;}
+.rg-bar:nth-child(8){height:60%;animation-delay:.7s;}
+@keyframes barGrow{0%,100%{opacity:.7}50%{opacity:1}}
+.rg-val{font-family:var(--display);font-size:20px;color:var(--lime);margin-top:4px;}
+.rg-sub{font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:1px;}
+
+/* AI AGENT CHAT MOCKUP */
+.chat-mockup{background:#0a0a0a;border:1px solid var(--border);border-radius:4px;overflow:hidden;width:100%;max-width:440px;margin:0 auto;box-shadow:0 40px 80px rgba(0,0,0,.5);}
+.chat-header{background:#111;padding:14px 20px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);}
+.agent-dot{width:8px;height:8px;background:var(--lime);border-radius:50%;animation:blink 1.5s ease-in-out infinite;}
+.chat-agent-name{font-family:var(--display);font-size:18px;text-transform:uppercase;letter-spacing:1px;}
+.chat-status{font-family:var(--mono);font-size:9px;letter-spacing:1px;color:var(--lime);margin-left:auto;opacity:.8;}
+.chat-body{padding:20px;display:flex;flex-direction:column;gap:12px;min-height:200px;}
+.chat-msg{max-width:80%;padding:10px 14px;font-size:13px;line-height:1.6;animation:msgIn .4s var(--ease-out-expo) both;}
+@keyframes msgIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.chat-msg.agent{background:#161616;border:1px solid var(--border);color:#aaa;border-radius:0 12px 12px 12px;align-self:flex-start;}
+.chat-msg.agent strong{color:var(--lime);}
+.chat-msg.user{background:var(--lime);color:var(--black);border-radius:12px 0 12px 12px;align-self:flex-end;font-weight:600;}
+.chat-msg-1{animation-delay:.5s;}
+.chat-msg-2{animation-delay:1.2s;}
+.chat-msg-3{animation-delay:2s;}
+.chat-msg-4{animation-delay:2.8s;}
+.chat-typing{display:flex;gap:4px;padding:10px 14px;background:#161616;border:1px solid var(--border);border-radius:0 12px 12px 12px;width:fit-content;animation:msgIn .4s var(--ease-out-expo) 3.5s both;}
+.typing-dot{width:6px;height:6px;background:var(--lime);border-radius:50%;animation:typingBounce 1.2s ease-in-out infinite;}
+.typing-dot:nth-child(2){animation-delay:.2s;}
+.typing-dot:nth-child(3){animation-delay:.4s;}
+@keyframes typingBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.chat-footer{padding:12px 20px;border-top:1px solid var(--border);display:flex;gap:8px;}
+.chat-input{flex:1;background:#161616;border:1px solid var(--border);padding:8px 12px;font-family:var(--mono);font-size:10px;color:var(--muted);outline:none;letter-spacing:1px;}
+.chat-send{background:var(--lime);color:var(--black);border:none;padding:8px 14px;font-family:var(--mono);font-size:10px;letter-spacing:1px;text-transform:uppercase;cursor:none;}
+/* stat badges */
+.chat-stats{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;}
+.chat-stat{background:#0a0a0a;border:1px solid var(--border);padding:8px 14px;}
+.chat-stat-val{font-family:var(--display);font-size:24px;color:var(--lime);}
+.chat-stat-label{font-family:var(--mono);font-size:8px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;}
+
+/* AUTOMATION WORKFLOW MOCKUP */
+.workflow-mockup{width:100%;max-width:460px;margin:0 auto;}
+.workflow-node{background:#0e0e0e;border:1px solid var(--border);padding:14px 18px;display:flex;align-items:center;gap:12px;transition:border-color .3s;}
+.workflow-node:hover{border-color:rgba(170,255,0,.4);}
+.wf-icon{width:32px;height:32px;background:var(--lime);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.wf-info{flex:1;}
+.wf-name{font-family:var(--display);font-size:16px;text-transform:uppercase;letter-spacing:.5px;color:var(--white);}
+.wf-sub{font-family:var(--mono);font-size:9px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;}
+.wf-status{font-family:var(--mono);font-size:9px;letter-spacing:1px;color:var(--lime);}
+.wf-connector{display:flex;flex-direction:column;align-items:flex-start;padding-left:31px;gap:0;}
+.wf-line{width:1px;height:20px;background:linear-gradient(to bottom,var(--border),var(--lime));margin-left:15px;}
+.wf-arrow{font-size:12px;color:var(--lime);margin-left:10px;animation:arrowPulse 2s ease-in-out infinite;}
+@keyframes arrowPulse{0%,100%{opacity:.4}50%{opacity:1}}
+.wf-trigger{background:#0a1a00;border-color:rgba(170,255,0,.3)!important;}
+.wf-metrics{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-top:2px;background:var(--border);}
+.wf-metric{background:#0a0a0a;padding:12px 16px;}
+.wf-metric-val{font-family:var(--display);font-size:28px;color:var(--lime);}
+.wf-metric-label{font-family:var(--mono);font-size:8px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;}
+
+/* CONTENT STRATEGY MOCKUP */
+.strategy-mockup{width:100%;max-width:460px;margin:0 auto;}
+.strategy-calendar{background:#0a0a0a;border:1px solid var(--border);padding:20px;}
+.cal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+.cal-month{font-family:var(--display);font-size:22px;text-transform:uppercase;letter-spacing:1px;}
+.cal-nav{font-family:var(--mono);font-size:10px;color:var(--lime);letter-spacing:2px;}
+.cal-days-header{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:6px;}
+.cal-day-name{font-family:var(--mono);font-size:8px;letter-spacing:1px;color:var(--muted);text-align:center;text-transform:uppercase;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+.cal-cell{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;color:var(--muted);position:relative;border-radius:2px;}
+.cal-cell.has-post{background:#0d1a00;color:var(--white);}
+.cal-cell.has-post::after{content:'';position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:4px;height:4px;background:var(--lime);border-radius:50%;}
+.cal-cell.today{background:var(--lime);color:var(--black);font-weight:700;}
+.cal-cell.empty{opacity:.2;}
+.strategy-metrics{display:flex;gap:2px;background:var(--border);margin-top:2px;}
+.strat-metric{flex:1;background:#0a0a0a;padding:12px 14px;}
+.strat-metric-val{font-family:var(--display);font-size:26px;color:var(--lime);line-height:1;}
+.strat-metric-label{font-family:var(--mono);font-size:8px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;margin-top:4px;}
+.platform-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;}
+.platform-chip{font-family:var(--mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border:1px solid rgba(170,255,0,.25);color:var(--lime);}
+.platform-chip.active{background:var(--lime);color:var(--black);}
+
+/* AI B-ROLL MOCKUP */
+.broll-mockup{width:100%;max-width:460px;margin:0 auto;}
+.broll-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;background:var(--border);margin-bottom:2px;}
+.broll-frame{aspect-ratio:16/9;position:relative;overflow:hidden;}
+.broll-frame-inner{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;}
+.broll-frame-1{background:linear-gradient(135deg,#001800,#003300);}
+.broll-frame-2{background:linear-gradient(135deg,#1a0000,#330000);}
+.broll-frame-3{background:linear-gradient(135deg,#000018,#000033);}
+.broll-frame-4{background:linear-gradient(135deg,#1a1a00,#2a2a00);}
+.broll-label{position:absolute;bottom:4px;left:4px;font-family:var(--mono);font-size:7px;letter-spacing:1px;color:rgba(170,255,0,.8);text-transform:uppercase;}
+.broll-active-frame{width:6px;height:6px;border:1px solid var(--lime);border-radius:50%;}
+.broll-prompt{background:#0a0a0a;border:1px solid var(--border);padding:14px 16px;}
+.broll-prompt-label{font-family:var(--mono);font-size:8px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:8px;}
+.broll-prompt-text{font-size:12px;line-height:1.6;color:#888;font-style:italic;}
+.broll-prompt-text em{color:var(--lime);font-style:normal;}
+.broll-gen-bar{margin-top:10px;height:2px;background:var(--border);}
+.broll-gen-fill{height:2px;background:var(--lime);animation:genProgress 4s ease-in-out infinite;}
+@keyframes genProgress{0%{width:0%}70%{width:90%}71%{width:0%}100%{width:0%}}
+.broll-tools{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
+.broll-tool{font-family:var(--mono);font-size:8px;letter-spacing:1px;text-transform:uppercase;padding:3px 8px;border:1px solid var(--border);color:var(--muted);}
+
+/* ── STATS ── */
+.stats-bar{background:var(--lime);padding:52px 64px;display:grid;grid-template-columns:repeat(4,1fr);gap:2px;overflow:hidden;}
+.stat-item{padding:0 40px;border-right:1px solid rgba(0,0,0,.15);}
+.stat-item:last-child{border:none;}
+.stat-num{font-family:var(--display);font-size:72px;color:var(--black);line-height:1;letter-spacing:-1px;}
+.stat-label{font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(0,0,0,.55);margin-top:8px;}
+
+/* ── PRICING ── */
+#pricing{padding:120px 64px;background:var(--offblack);border-top:1px solid var(--border);}
+.pricing-intro{max-width:600px;margin-bottom:72px;}
+.pricing-intro p{font-size:16px;line-height:1.8;color:var(--muted);margin-top:20px;}
+.pricing-intro strong{color:var(--white);}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--border);}
+.pricing-card{background:var(--offblack);padding:52px 44px;position:relative;overflow:hidden;transition:background .3s;}
+.pricing-card.featured{background:#0a1400;border-top:3px solid var(--lime);}
+.pricing-card:hover{background:#0c0c0c;}
+.pricing-card.featured:hover{background:#0d1a00;}
+.pricing-card-tag{font-family:var(--mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--lime);margin-bottom:20px;opacity:.7;}
+.pricing-card.featured .pricing-card-tag{opacity:1;}
+.pricing-card-name{font-family:var(--display);font-size:44px;text-transform:uppercase;letter-spacing:.5px;line-height:1;margin-bottom:24px;}
+.pricing-range-label{font-family:var(--mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.pricing-range-value{font-family:var(--display);font-size:36px;color:var(--lime);letter-spacing:1px;line-height:1;}
+.pricing-range-sub{font-family:var(--mono);font-size:9px;letter-spacing:1px;color:var(--muted);margin-top:4px;}
+.pricing-divider{height:1px;background:var(--border);margin:28px 0;}
+.pricing-includes{font-family:var(--mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.pricing-features{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:32px;}
+.pricing-features li{font-size:13px;line-height:1.6;color:#888;padding-left:16px;position:relative;}
+.pricing-features li::before{content:'✦';position:absolute;left:0;color:var(--lime);font-size:8px;top:3px;}
+.pricing-cta{display:block;font-family:var(--display);font-size:18px;letter-spacing:3px;text-transform:uppercase;color:var(--black);background:var(--lime);padding:16px 24px;text-decoration:none;text-align:center;transition:opacity .2s;}
+.pricing-cta:hover{opacity:.85;}
+.pricing-cta-outline{display:block;font-family:var(--display);font-size:18px;letter-spacing:3px;text-transform:uppercase;color:var(--lime);background:transparent;border:1px solid rgba(170,255,0,.3);padding:16px 24px;text-decoration:none;text-align:center;transition:all .2s;}
+.pricing-cta-outline:hover{background:rgba(170,255,0,.06);}
+.pricing-note{margin-top:40px;font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);text-align:center;line-height:1.8;}
+.pricing-note span{color:var(--lime);}
+
+/* ── HOW ── */
+#how{padding:120px 64px;background:var(--black);position:relative;overflow:hidden;}
+#how .bg-num{position:absolute;right:-30px;top:50%;transform:translateY(-50%);font-family:var(--display);font-size:480px;color:transparent;-webkit-text-stroke:1px rgba(170,255,0,.025);pointer-events:none;user-select:none;line-height:1;}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;background:var(--border);position:relative;z-index:1;}
+.step{background:var(--black);padding:52px 40px;position:relative;transition:background .3s;}
+.step:hover{background:#0a0a0a;}
+.step-n{font-family:var(--display);font-size:100px;color:transparent;-webkit-text-stroke:1px rgba(170,255,0,.12);line-height:1;margin-bottom:28px;transition:-webkit-text-stroke .4s;}
+.step:hover .step-n{-webkit-text-stroke:1px rgba(170,255,0,.5);}
+.step-title{font-family:var(--display);font-size:30px;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;color:var(--white);}
+.step-desc{font-size:13px;line-height:1.85;color:var(--muted);}
+.step-arr{position:absolute;top:52px;right:-1px;font-size:16px;color:var(--lime);opacity:.4;z-index:2;}
+
+/* ── QUOTE ── */
+.quote-break{background:var(--offblack);padding:100px 64px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);position:relative;overflow:hidden;}
+.quote-break blockquote{font-family:var(--display);font-size:clamp(40px,5.5vw,84px);line-height:.96;text-transform:uppercase;letter-spacing:-.5px;max-width:980px;color:var(--white);}
+.quote-break blockquote em{font-style:normal;-webkit-text-stroke:1.5px var(--lime);color:transparent;}
+.q-attr{margin-top:36px;font-family:var(--mono);font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);}
+.quote-bg{position:absolute;right:64px;top:50%;transform:translateY(-50%);font-family:var(--display);font-size:280px;color:var(--lime);opacity:.04;line-height:1;pointer-events:none;user-select:none;}
+
+/* ── WHO ── */
+#who{padding:120px 64px;background:var(--black);}
+.who-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--border);margin-top:72px;}
+.who-card{background:var(--black);padding:48px 44px;transition:background .3s;}
+.who-card:hover{background:#0a0a0a;}
+.who-icon{font-size:28px;margin-bottom:24px;}
+.who-name{font-family:var(--display);font-size:30px;text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px;color:var(--white);}
+.who-desc{font-size:13px;line-height:1.85;color:var(--muted);}
+.who-tag{display:inline-block;margin-top:24px;font-family:var(--mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--lime);border:1px solid rgba(170,255,0,.25);padding:5px 12px;}
+
+/* ── CONTACT ── */
+#contact{padding:120px 64px;background:var(--offblack);position:relative;overflow:hidden;}
+#contact .ghost{position:absolute;bottom:-60px;left:-10px;font-family:var(--display);font-size:clamp(100px,18vw,260px);color:transparent;-webkit-text-stroke:1px rgba(170,255,0,.025);pointer-events:none;user-select:none;white-space:nowrap;line-height:1;}
+.contact-grid{display:grid;grid-template-columns:1fr 1.1fr;gap:100px;position:relative;z-index:1;}
+.contact-head{font-family:var(--display);font-size:clamp(52px,7vw,96px);line-height:.92;text-transform:uppercase;margin-bottom:28px;letter-spacing:-.5px;}
+.contact-head mark{background:none;color:var(--lime);}
+.contact-sub{font-size:16px;line-height:1.8;color:var(--muted);margin-bottom:52px;}
+.c-row{display:flex;gap:20px;align-items:center;padding:18px 0;border-bottom:1px solid var(--border);}
+.c-label{font-family:var(--mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);width:80px;flex-shrink:0;}
+.c-val{font-size:14px;font-weight:600;color:var(--white);}
+.c-val a{color:var(--lime);text-decoration:none;}
+.contact-form{display:flex;flex-direction:column;gap:2px;}
+.f-row{display:grid;grid-template-columns:1fr 1fr;gap:2px;}
+.f-full{grid-column:1/-1;}
+.f-field{background:var(--grey);position:relative;}
+.f-field label{font-family:var(--mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);display:block;padding:14px 18px 4px;}
+.f-field input,.f-field textarea,.f-field select{width:100%;background:transparent;border:none;outline:none;font-family:var(--body);font-size:14px;color:var(--white);padding:2px 18px 14px;resize:none;-webkit-appearance:none;}
+.f-field select option{background:var(--grey);color:var(--white);}
+.f-field textarea{height:110px;}
+.f-field::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--lime);transform:scaleX(0);transform-origin:left;transition:transform .4s var(--ease-out-expo);}
+.f-field:focus-within::after{transform:scaleX(1);}
+.f-btn{background:var(--lime);color:var(--black);border:none;padding:22px;font-family:var(--display);font-size:20px;letter-spacing:4px;text-transform:uppercase;cursor:none;transition:background .2s,transform .2s;width:100%;display:flex;align-items:center;justify-content:center;gap:12px;margin-top:2px;}
+.f-btn:hover{background:var(--white);transform:translateY(-2px);}
+
+/* ── FOOTER ── */
+footer{background:var(--black);padding:44px 64px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);}
+.f-logo{font-family:var(--display);font-size:22px;letter-spacing:5px;}
+.f-logo b{color:var(--lime);}
+.f-copy{font-family:var(--mono);font-size:10px;letter-spacing:2px;color:#222;text-transform:uppercase;}
+.f-socials{display:flex;gap:28px;list-style:none;}
+.f-socials a{font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#333;text-decoration:none;transition:color .2s;}
+.f-socials a:hover{color:var(--lime);}
+
+/* ── HAMBURGER ── */
+.hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:4px;z-index:600;}
+.hamburger span{display:block;width:24px;height:1.5px;background:var(--white);transition:all .35s var(--ease-out-expo);transform-origin:center;}
+.hamburger.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg);}
+.hamburger.open span:nth-child(2){opacity:0;transform:scaleX(0);}
+.hamburger.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg);}
+@media(max-width:768px){.hamburger{display:flex;}}
+
+/* ── MOBILE MENU ── */
+.mobile-menu{position:fixed;inset:0;background:rgba(6,6,6,.97);backdrop-filter:blur(16px);z-index:400;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:0;opacity:0;pointer-events:none;transform:translateY(-20px);transition:opacity .4s var(--ease-out-expo),transform .4s var(--ease-out-expo);}
+.mobile-menu.open{opacity:1;pointer-events:all;transform:translateY(0);}
+.mobile-menu ul{list-style:none;display:flex;flex-direction:column;align-items:center;gap:4px;width:100%;padding:0 40px;}
+.mobile-menu ul li a{font-family:var(--display);font-size:clamp(40px,8vw,64px);text-transform:uppercase;letter-spacing:2px;color:var(--white);text-decoration:none;display:block;padding:8px 0;transition:color .2s;line-height:1;}
+.mobile-menu ul li a:hover{color:var(--lime);}
+.mobile-cta{display:inline-flex;font-family:var(--display);font-size:18px;letter-spacing:3px;text-transform:uppercase;color:var(--black);background:var(--lime);padding:16px 40px;text-decoration:none;margin-top:40px;transition:opacity .2s;}
+.mobile-cta:hover{opacity:.85;}
+::-webkit-scrollbar-track{background:var(--black)}::-webkit-scrollbar-thumb{background:var(--lime)}
+
+/* RESPONSIVE */
+/* ══════════════════════════════════════
+   TABLET LANDSCAPE — 1024px and below
+══════════════════════════════════════ */
+@media(max-width:1024px){
+  nav{padding:24px 40px;}
+  #hero,#pain,#content-marketing,#services-ai,#pricing,#how,#who,#contact{padding:100px 40px;}
+  .service-full{grid-template-columns:1fr;gap:56px;}
+  .service-full.reverse{direction:ltr;}
+  .mockup-wrap{max-width:480px;margin:0 auto;}
+  .steps{grid-template-columns:repeat(2,1fr);}
+  .stats-bar{padding:44px 40px;}
+  .stat-item{padding:0 24px;}
+  .quote-break{padding:80px 40px;}
+  footer{padding:40px 40px;}
+  .contact-grid{gap:60px;}
+}
+
+/* ══════════════════════════════════════
+   TABLET PORTRAIT — 768px and below
+══════════════════════════════════════ */
+@media(max-width:768px){
+  #cur,#cur-ring{display:none;}
+  body{cursor:auto;}
+  nav{padding:20px 28px;}
+  .nav-links{display:none;}
+  .nav-btn{padding:10px 18px;font-size:9px;}
+
+  #hero{padding:0 28px 64px;}
+  h1.hero-head{font-size:clamp(52px,10vw,80px);line-height:.92;}
+  .hero-eyebrow{font-size:9px;}
+  .hero-bottom{flex-direction:column;align-items:flex-start;margin-top:44px;gap:28px;}
+  .hero-sub{font-size:15px;max-width:100%;}
+  .hero-cta{padding:18px 32px;font-size:17px;width:100%;justify-content:center;}
+  .hero-ghost{font-size:clamp(100px,18vw,180px);}
+  .scroll-hint{display:none;}
+
+  .ticker-item{font-size:9px;padding:0 20px;}
+
+  #pain{padding:80px 28px;grid-template-columns:1fr;gap:44px;}
+  .pain-head{font-size:clamp(38px,8vw,60px);}
+  .pain-item{padding:22px 24px;}
+
+  #content-marketing{padding:80px 28px;}
+  #services-ai{padding:0 28px 80px;}
+  .service-full{gap:44px;padding:60px 0;}
+  .service-title{font-size:clamp(36px,7vw,56px);}
+  .service-desc{font-size:14px;max-width:100%;}
+
+  /* phone mockup scale down */
+  .phone-mockup{width:180px;height:320px;}
+  .reel-hook{font-size:14px;}
+  /* laptop mockup */
+  .laptop-mockup{max-width:100%;}
+  .retention-graph{display:none;}
+  /* chat mockup */
+  .chat-mockup{max-width:100%;}
+  .chat-stats{gap:6px;}
+  .chat-stat{padding:8px 10px;flex:1;}
+  /* workflow */
+  .workflow-mockup{max-width:100%;}
+  .wf-metrics{grid-template-columns:1fr 1fr;}
+  /* strategy */
+  .strategy-mockup{max-width:100%;}
+  /* broll */
+  .broll-mockup{max-width:100%;}
+
+  .sec-head{font-size:clamp(44px,8vw,72px);}
+  .section-top{flex-direction:column;align-items:flex-start;gap:16px;}
+  .sec-desc{max-width:100%;}
+
+  .stats-bar{grid-template-columns:1fr 1fr;padding:36px 28px;gap:20px;}
+  .stat-item{border:none;padding:0;}
+  .stat-num{font-size:56px;}
+
+  #pricing{padding:80px 28px;}
+  .pricing-grid{grid-template-columns:1fr;}
+  .pricing-card{padding:40px 32px;}
+  .pricing-note{font-size:9px;}
+
+  #how{padding:80px 28px;}
+  .steps{grid-template-columns:1fr;}
+  .step{padding:40px 32px;}
+  .step-n{font-size:80px;}
+  .step-arr{display:none;}
+  #how .bg-num{display:none;}
+
+  .quote-break{padding:60px 28px;}
+  .quote-break blockquote{font-size:clamp(32px,6vw,52px);}
+
+  #who{padding:80px 28px;}
+  .who-grid{grid-template-columns:1fr;}
+  .who-card{padding:36px 32px;}
+
+  #contact{padding:80px 28px;}
+  .contact-grid{grid-template-columns:1fr;gap:48px;}
+  .contact-head{font-size:clamp(44px,8vw,72px);}
+  .f-row{grid-template-columns:1fr;}
+  .f-full{grid-column:1;}
+  .f-field input,.f-field textarea,.f-field select{font-size:16px;} /* prevents iOS zoom */
+
+  footer{flex-direction:column;gap:16px;padding:36px 28px;text-align:center;}
+  .f-socials{justify-content:center;}
+
+  .pricing-intro{margin-bottom:48px;}
+}
+
+/* ══════════════════════════════════════
+   MOBILE LARGE — 480px and below
+══════════════════════════════════════ */
+@media(max-width:480px){
+  nav{padding:18px 20px;}
+  .logo{font-size:20px;letter-spacing:3px;}
+  .nav-btn{display:none;}
+
+  #hero{padding:0 20px 56px;}
+  h1.hero-head{font-size:clamp(44px,12vw,64px);}
+  .hero-eyebrow{font-size:8px;letter-spacing:3px;}
+  .hero-ghost{display:none;}
+  .orb{display:none;}
+
+  #pain,#content-marketing,#services-ai,#pricing,#how,#who,#contact{padding:64px 20px;}
+  .pain-head{font-size:clamp(34px,9vw,52px);}
+  .pain-item{padding:18px 18px;}
+  .pain-item-title{font-size:14px;}
+
+  .service-full{padding:48px 0;}
+  .service-title{font-size:clamp(32px,9vw,48px);}
+
+  /* phone mockup on small screens */
+  .phone-mockup{width:160px;height:290px;border-radius:24px;}
+  .phone-badge{display:none;}
+
+  .stats-bar{grid-template-columns:1fr;padding:32px 20px;gap:28px;}
+  .stat-num{font-size:64px;}
+  .stat-label{font-size:9px;}
+
+  .sec-head{font-size:clamp(40px,10vw,60px);}
+  .pricing-card{padding:32px 24px;}
+  .pricing-card-name{font-size:36px;}
+  .pricing-range-value{font-size:28px;}
+
+  .step{padding:36px 24px;}
+  .step-n{font-size:64px;}
+  .step-title{font-size:24px;}
+
+  .who-card{padding:28px 24px;}
+  .who-name{font-size:24px;}
+
+  .contact-head{font-size:clamp(38px,10vw,56px);}
+  .contact-sub{font-size:14px;}
+  .c-row{flex-direction:column;align-items:flex-start;gap:4px;padding:14px 0;}
+  .c-label{width:auto;}
+
+  .quote-break{padding:48px 20px;}
+  .quote-break blockquote{font-size:clamp(28px,7vw,44px);}
+
+  footer{padding:28px 20px;gap:12px;}
+  .f-logo{font-size:18px;}
+  .currency-badge{bottom:12px;left:12px;font-size:8px;padding:6px 10px;}
+
+  .chat-stats{flex-direction:column;}
+  .strategy-calendar{padding:14px;}
+  .cal-cell{font-size:9px;}
+}
+
+/* ══════════════════════════════════════
+   MOBILE SMALL — 360px and below
+══════════════════════════════════════ */
+@media(max-width:360px){
+  h1.hero-head{font-size:38px;}
+  .service-title{font-size:30px;}
+  .sec-head{font-size:36px;}
+  .pain-head{font-size:30px;}
+  .phone-mockup{width:140px;height:260px;}
+  .broll-strip{grid-template-columns:repeat(2,1fr);}
+  .wf-metrics{grid-template-columns:1fr;}
+  nav{padding:16px 16px;}
+}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<div id="cur"></div>
+<div id="cur-ring"></div>
+<div class="currency-badge" id="currencyBadge">🌍 Viewing in USD</div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="#" class="logo">DASH<b>.</b>ANT</a>
+  <ul class="nav-links">
+    <li><a href="#content-marketing">Content</a></li>
+    <li><a href="#services-ai">AI Systems</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#how">Process</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="#contact" class="nav-btn"><span>Get a Proposal</span></a>
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <ul>
+    <li><a href="#content-marketing" onclick="closeMobileMenu()">Content</a></li>
+    <li><a href="#services-ai" onclick="closeMobileMenu()">AI Systems</a></li>
+    <li><a href="#pricing" onclick="closeMobileMenu()">Pricing</a></li>
+    <li><a href="#how" onclick="closeMobileMenu()">Process</a></li>
+    <li><a href="#who" onclick="closeMobileMenu()">Who We Help</a></li>
+    <li><a href="#contact" onclick="closeMobileMenu()">Contact</a></li>
+  </ul>
+  <a href="#contact" class="mobile-cta" onclick="closeMobileMenu()">Get a Proposal →</a>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-grid"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="hero-ghost">DASHANT</div>
+  <p class="hero-eyebrow"><span class="hero-dot"></span> Hybrid AI & Media Agency — Pune, India</p>
+  <h1 class="hero-head">Your Brand<br/>Gets Attention.<br/>We Make It<br/><mark>Convert.</mark></h1>
+  <div class="hero-bottom">
+    <p class="hero-sub">Dashant builds <strong>cinematic content and autonomous AI systems</strong> that work together — so every piece of content you put out actually turns into leads, clients, and revenue.</p>
+    <a href="#contact" class="hero-cta"><span>Start Building</span><span class="arrow-anim">→</span></a>
+  </div>
+  <div class="scroll-hint">
+    <div class="scroll-line"></div>
+    <span class="scroll-text">Scroll</span>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-track">
+    <span class="ticker-item">Short-Form Reels <span class="sep">✦</span></span>
+    <span class="ticker-item">Long-Form YouTube <span class="sep">✦</span></span>
+    <span class="ticker-item">AI Marketing Agents <span class="sep">✦</span></span>
+    <span class="ticker-item">Hook Writing <span class="sep">✦</span></span>
+    <span class="ticker-item">Motion Graphics <span class="sep">✦</span></span>
+    <span class="ticker-item">Business Automation <span class="sep">✦</span></span>
+    <span class="ticker-item">Thumbnail Design <span class="sep">✦</span></span>
+    <span class="ticker-item">Real Estate Funnels <span class="sep">✦</span></span>
+    <span class="ticker-item">Content Strategy <span class="sep">✦</span></span>
+    <span class="ticker-item">Agentic AI Systems <span class="sep">✦</span></span>
+    <span class="ticker-item">Short-Form Reels <span class="sep">✦</span></span>
+    <span class="ticker-item">Long-Form YouTube <span class="sep">✦</span></span>
+    <span class="ticker-item">AI Marketing Agents <span class="sep">✦</span></span>
+    <span class="ticker-item">Hook Writing <span class="sep">✦</span></span>
+    <span class="ticker-item">Motion Graphics <span class="sep">✦</span></span>
+    <span class="ticker-item">Business Automation <span class="sep">✦</span></span>
+    <span class="ticker-item">Thumbnail Design <span class="sep">✦</span></span>
+    <span class="ticker-item">Real Estate Funnels <span class="sep">✦</span></span>
+    <span class="ticker-item">Content Strategy <span class="sep">✦</span></span>
+    <span class="ticker-item">Agentic AI Systems <span class="sep">✦</span></span>
+  </div>
+</div>
+
+<!-- PAIN -->
+<section id="pain">
+  <div class="reveal-left">
+    <p class="pain-label">The Problem</p>
+    <h2 class="pain-head">Most Brands Are Stuck With <mark>One Half.</mark></h2>
+  </div>
+  <div class="pain-right">
+    <div class="pain-item reveal d1">
+      <div class="pain-item-title">Great creative. Zero conversions.</div>
+      <p class="pain-item-desc">You've invested in premium content — but there's no system behind it turning that attention into booked calls, qualified leads, or actual sales. Views don't pay the bills.</p>
+    </div>
+    <div class="pain-item reveal d2">
+      <div class="pain-item-title">Automation set up. No content feeding it.</div>
+      <p class="pain-item-desc">You have workflows and funnels running — but the content going into them is generic, off-brand, and not stopping anyone's scroll long enough to matter.</p>
+    </div>
+    <div class="pain-item reveal d3">
+      <div class="pain-item-title">Dashant fixes both. At the same time.</div>
+      <p class="pain-item-desc">We build the media that captures attention AND the AI infrastructure that converts it — engineered together so neither arm wastes the other.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════
+     CONTENT MARKETING SERVICES
+══════════════════════════ -->
+<section id="content-marketing">
+  <div class="reveal" style="margin-bottom:80px;">
+    <p class="sec-label">Creative Arm</p>
+    <h2 class="sec-head">Content &<br/>Editing</h2>
+  </div>
+
+  <!-- SERVICE 1: Short Form -->
+  <div class="service-full">
+    <div class="service-info reveal-left">
+      <div class="service-num-label">01 — Creative Arm</div>
+      <span class="service-arm-badge">Short-Form Content</span>
+      <h3 class="service-title">Reels That<br/>Stop The<br/>Scroll.</h3>
+      <p class="service-desc">Most content fails in the first 3 seconds. We engineer the hook, structure the retention arc, and edit every frame to keep people watching — then push them to act.</p>
+      <div class="service-features">
+        <div class="service-feature">Instagram Reels, YouTube Shorts, TikTok</div>
+        <div class="service-feature">Hook writing & first-3-second engineering</div>
+        <div class="service-feature">Retention-paced editing with Premiere Pro</div>
+        <div class="service-feature">Captions, sound design, motion text</div>
+        <div class="service-feature">Platform-specific formatting & optimisation</div>
+      </div>
+      <div class="service-outcome">Outcome: Content that earns attention, not just impressions</div>
+      <a href="#contact" class="service-cta-link">Get a proposal <span class="arr">→</span></a>
+    </div>
+    <div class="mockup-wrap reveal-right">
+      <div style="position:relative;display:flex;justify-content:center;">
+        <div class="phone-mockup">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div class="reel-bg">
+              <div class="reel-play"><div class="reel-play-icon"></div></div>
+            </div>
+            <div class="reel-overlay"></div>
+            <div class="reel-visual"></div>
+            <div class="reel-hook" style="position:absolute;bottom:60px;left:14px;right:14px;z-index:2;">
+              I made <span>₹8L</span> in 30 days using this one AI system
+            </div>
+            <div style="position:absolute;bottom:14px;left:14px;right:14px;z-index:2;">
+              <div class="reel-bar"><div class="reel-progress"></div></div>
+              <div class="reel-stats">
+                <div class="reel-stat">👁 <b>2.4M</b></div>
+                <div class="reel-stat">❤️ <b>94K</b></div>
+                <div class="reel-stat">💬 <b>3.2K</b></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="phone-badge phone-badge-1">Hook Rate: 78%</div>
+        <div class="phone-badge phone-badge-2">Avg Watch: 94%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SERVICE 2: Long Form YouTube -->
+  <div class="service-full reverse">
+    <div class="service-info reveal-right">
+      <div class="service-num-label">02 — Creative Arm</div>
+      <span class="service-arm-badge">Long-Form YouTube</span>
+      <h3 class="service-title">Videos That<br/>Build Brands<br/>& Watch Time.</h3>
+      <p class="service-desc">Long-form done right compounds forever. We edit for watch time, click-through, and channel authority — using B-roll, motion graphics, and narrative structure that keeps viewers to the end.</p>
+      <div class="service-features">
+        <div class="service-feature">Full YouTube video editing — any length</div>
+        <div class="service-feature">B-roll sourcing & AI-generated visuals</div>
+        <div class="service-feature">After Effects motion graphics & titles</div>
+        <div class="service-feature">Colour grading & audio mastering</div>
+        <div class="service-feature">Thumbnail design that gets the click</div>
+      </div>
+      <div class="service-outcome">Outcome: Channel growth and authority that compounds</div>
+      <a href="#contact" class="service-cta-link">Get a proposal <span class="arr">→</span></a>
+    </div>
+    <div class="mockup-wrap reveal-left">
+      <div style="position:relative;">
+        <div class="laptop-mockup">
+          <div class="laptop-screen-wrap">
+            <div class="laptop-topbar"><div class="dot-red"></div><div class="dot-yellow"></div><div class="dot-green"></div></div>
+            <div class="yt-player">
+              <div class="yt-thumbnail">
+                <div class="yt-play"><div class="yt-play-icon"></div></div>
+              </div>
+            </div>
+            <div class="yt-timeline">
+              <div class="yt-title">How I Automated My Entire Business <span>with AI</span></div>
+              <div class="yt-meta">Dashant · 247K views · 2 days ago</div>
+              <div class="yt-progress-wrap"><div class="yt-progress-fill"></div></div>
+              <div class="yt-chapters">
+                <div class="yt-chapter active"></div>
+                <div class="yt-chapter active"></div>
+                <div class="yt-chapter"></div>
+                <div class="yt-chapter"></div>
+                <div class="yt-chapter"></div>
+                <div class="yt-chapter"></div>
+              </div>
+            </div>
+          </div>
+          <div class="laptop-base"></div>
+          <div class="laptop-stand"></div>
+        </div>
+        <div class="retention-graph">
+          <div class="rg-label">Retention Rate</div>
+          <div class="rg-bars">
+            <div class="rg-bar"></div><div class="rg-bar"></div><div class="rg-bar"></div><div class="rg-bar"></div>
+            <div class="rg-bar"></div><div class="rg-bar"></div><div class="rg-bar"></div><div class="rg-bar"></div>
+          </div>
+          <div class="rg-val">82%</div>
+          <div class="rg-sub">Avg Retention</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SERVICE 3: Content Strategy -->
+  <div class="service-full">
+    <div class="service-info reveal-left">
+      <div class="service-num-label">03 — Creative Arm</div>
+      <span class="service-arm-badge">Content Strategy</span>
+      <h3 class="service-title">The Engine<br/>Behind<br/>Consistent Growth.</h3>
+      <p class="service-desc">Posting without a strategy is just noise. We build the full content engine — pillars, calendar, platform strategy, and repurposing systems that compound your audience and feed your funnel.</p>
+      <div class="service-features">
+        <div class="service-feature">Monthly content calendars & pillars</div>
+        <div class="service-feature">Multi-platform strategy (IG, YT, LinkedIn, TikTok)</div>
+        <div class="service-feature">Content repurposing — 1 piece becomes 10</div>
+        <div class="service-feature">Analytics review & performance optimisation</div>
+        <div class="service-feature">Posting schedule & frequency planning</div>
+      </div>
+      <div class="service-outcome">Outcome: A content machine that grows your audience daily</div>
+      <a href="#contact" class="service-cta-link">Get a proposal <span class="arr">→</span></a>
+    </div>
+    <div class="mockup-wrap reveal-right">
+      <div class="strategy-mockup">
+        <div class="strategy-calendar">
+          <div class="cal-header">
+            <div class="cal-month">March 2025</div>
+            <div class="cal-nav">← →</div>
+          </div>
+          <div class="cal-days-header">
+            <div class="cal-day-name">M</div><div class="cal-day-name">T</div><div class="cal-day-name">W</div>
+            <div class="cal-day-name">T</div><div class="cal-day-name">F</div><div class="cal-day-name">S</div><div class="cal-day-name">S</div>
+          </div>
+          <div class="cal-grid">
+            <div class="cal-cell empty"></div><div class="cal-cell empty"></div><div class="cal-cell empty"></div>
+            <div class="cal-cell empty"></div><div class="cal-cell has-post">1</div><div class="cal-cell">2</div><div class="cal-cell">3</div>
+            <div class="cal-cell has-post">4</div><div class="cal-cell">5</div><div class="cal-cell has-post">6</div>
+            <div class="cal-cell">7</div><div class="cal-cell has-post">8</div><div class="cal-cell">9</div><div class="cal-cell">10</div>
+            <div class="cal-cell has-post">11</div><div class="cal-cell">12</div><div class="cal-cell has-post">13</div>
+            <div class="cal-cell">14</div><div class="cal-cell has-post">15</div><div class="cal-cell today">16</div><div class="cal-cell">17</div>
+            <div class="cal-cell has-post">18</div><div class="cal-cell">19</div><div class="cal-cell has-post">20</div>
+            <div class="cal-cell">21</div><div class="cal-cell has-post">22</div><div class="cal-cell">23</div><div class="cal-cell">24</div>
+            <div class="cal-cell has-post">25</div><div class="cal-cell">26</div><div class="cal-cell has-post">27</div>
+            <div class="cal-cell">28</div><div class="cal-cell has-post">29</div><div class="cal-cell">30</div><div class="cal-cell has-post">31</div>
+          </div>
+          <div class="platform-chips" style="margin-top:12px;">
+            <div class="platform-chip active">Instagram</div>
+            <div class="platform-chip active">YouTube</div>
+            <div class="platform-chip">LinkedIn</div>
+            <div class="platform-chip">TikTok</div>
+          </div>
+        </div>
+        <div class="strategy-metrics">
+          <div class="strat-metric"><div class="strat-metric-val">16</div><div class="strat-metric-label">Posts/mo</div></div>
+          <div class="strat-metric"><div class="strat-metric-val">4</div><div class="strat-metric-label">Platforms</div></div>
+          <div class="strat-metric"><div class="strat-metric-val">40+</div><div class="strat-metric-label">Assets/mo</div></div>
+          <div class="strat-metric"><div class="strat-metric-val">∞</div><div class="strat-metric-label">Repurposed</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════
+     AI SERVICES
+══════════════════════════ -->
+<section id="services-ai">
+  <div class="reveal" style="margin-bottom:80px;padding-top:80px;border-top:1px solid var(--border);">
+    <p class="sec-label">Tech Arm</p>
+    <h2 class="sec-head">AI Systems<br/>That Convert</h2>
+  </div>
+
+  <!-- SERVICE 4: AI Agents -->
+  <div class="service-full reverse">
+    <div class="service-info reveal-right">
+      <div class="service-num-label">04 — Tech Arm</div>
+      <span class="service-arm-badge">Agentic AI</span>
+      <h3 class="service-title">Your Brand<br/>Selling While<br/>You Sleep.</h3>
+      <p class="service-desc">We build autonomous AI marketing agents that DM leads, qualify them, answer objections, and book calls — all without you. Your brand, running 24/7 on autopilot.</p>
+      <div class="service-features">
+        <div class="service-feature">Self-talking AI agents for DMs & enquiries</div>
+        <div class="service-feature">Lead qualification & scoring automation</div>
+        <div class="service-feature">Objection handling trained on your brand</div>
+        <div class="service-feature">Automatic call booking & CRM integration</div>
+        <div class="service-feature">Multi-platform — Instagram, WhatsApp, email</div>
+      </div>
+      <div class="service-outcome">Outcome: Qualified leads booked while you sleep</div>
+      <a href="#contact" class="service-cta-link">Get a proposal <span class="arr">→</span></a>
+    </div>
+    <div class="mockup-wrap reveal-left">
+      <div class="chat-mockup">
+        <div class="chat-header">
+          <div class="agent-dot"></div>
+          <div class="chat-agent-name">Dashant AI Agent</div>
+          <div class="chat-status">● Online 24/7</div>
+        </div>
+        <div class="chat-body">
+          <div class="chat-msg agent chat-msg-1">Hey! 👋 I saw you were interested in scaling your real estate brand. <strong>Are you currently getting leads online?</strong></div>
+          <div class="chat-msg user chat-msg-2">Not really, mostly word of mouth</div>
+          <div class="chat-msg agent chat-msg-3">Got it — that's actually the <strong>exact problem</strong> we solve for real estate brands. We build AI systems that generate and qualify leads automatically. Want to see how it works for your market?</div>
+          <div class="chat-msg user chat-msg-4">Yes, how does it work?</div>
+          <div class="chat-typing">
+            <div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>
+          </div>
+        </div>
+        <div class="chat-footer">
+          <input class="chat-input" placeholder="Type a message..." readonly/>
+          <div class="chat-send">Send</div>
+        </div>
+      </div>
+      <div class="chat-stats">
+        <div class="chat-stat"><div class="chat-stat-val">340</div><div class="chat-stat-label">Leads/mo automated</div></div>
+        <div class="chat-stat"><div class="chat-stat-val">82%</div><div class="chat-stat-label">Qualify rate</div></div>
+        <div class="chat-stat"><div class="chat-stat-val">24/7</div><div class="chat-stat-label">Always on</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SERVICE 5: Business Automation -->
+  <div class="service-full">
+    <div class="service-info reveal-left">
+      <div class="service-num-label">05 — Tech Arm</div>
+      <span class="service-arm-badge">Business Automation</span>
+      <h3 class="service-title">Scale Without<br/>Burning<br/>Out.</h3>
+      <p class="service-desc">We map your entire operation and automate the repetitive work — onboarding, follow-ups, reporting, invoicing, CRM — so you can focus on the work that actually grows the business.</p>
+      <div class="service-features">
+        <div class="service-feature">End-to-end workflow mapping & automation</div>
+        <div class="service-feature">CRM setup & automated follow-up sequences</div>
+        <div class="service-feature">Client onboarding & offboarding automation</div>
+        <div class="service-feature">Reporting & analytics dashboards</div>
+        <div class="service-feature">Make, Zapier, n8n — we pick what fits you</div>
+      </div>
+      <div class="service-outcome">Outcome: 10–20 hours saved per week, minimum</div>
+      <a href="#contact" class="service-cta-link">Get a proposal <span class="arr">→</span></a>
+    </div>
+    <div class="mockup-wrap reveal-right">
+      <div class="workflow-mockup">
+        <div class="workflow-node wf-trigger">
+          <div class="wf-icon">⚡</div>
+          <div class="wf-info"><div class="wf-name">Trigger</div><div class="wf-sub">New lead submits form</div></div>
+          <div class="wf-status">● Active</div>
+        </div>
+        <div class="wf-connector"><div class="wf-line"></div><div class="wf-arrow">▼</div></div>
+        <div class="workflow-node">
+          <div class="wf-icon">🤖</div>
+          <div class="wf-info"><div class="wf-name">AI Qualify</div><div class="wf-sub">Score & segment lead</div></div>
+          <div class="wf-status">● Running</div>
+        </div>
+        <div class="wf-connector"><div class="wf-line"></div><div class="wf-arrow">▼</div></div>
+        <div class="workflow-node">
+          <div class="wf-icon">📧</div>
+          <div class="wf-info"><div class="wf-name">Send Email</div><div class="wf-sub">Personalised sequence</div></div>
+          <div class="wf-status">● Running</div>
+        </div>
+        <div class="wf-connector"><div class="wf-line"></div><div class="wf-arrow">▼</div></div>
+        <div class="workflow-node">
+          <div class="wf-icon">📅</div>
+          <div class="wf-info"><div class="wf-name">Book Call</div><div class="wf-sub">Auto Calendly invite</div></div>
+          <div class="wf-status">● Running</div>
+        </div>
+        <div class="wf-connector"><div class="wf-line"></div><div class="wf-arrow">▼</div></div>
+        <div class="workflow-node">
+          <div class="wf-icon">💼</div>
+          <div class="wf-info"><div class="wf-name">Update CRM</div><div class="wf-sub">Log & notify team</div></div>
+          <div class="wf-status">● Done</div>
+        </div>
+        <div class="wf-metrics">
+          <div class="wf-metric"><div class="wf-metric-val">18h</div><div class="wf-metric-label">Saved per week</div></div>
+          <div class="wf-metric"><div class="wf-metric-val">100%</div><div class="wf-metric-label">No leads missed</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SERVICE 6: AI B-Roll -->
+  <div class="service-full reverse">
+    <div class="service-info reveal-right">
+      <div class="service-num-label">06 — Creative + Tech</div>
+      <span class="service-arm-badge">AI Production</span>
+      <h3 class="service-title">Cinematic<br/>Visuals.<br/>No Film Crew.</h3>
+      <p class="service-desc">We use advanced AI prompt engineering to generate hyper-specific, brand-consistent cinematic B-roll and synthetic media — integrated seamlessly into your content at a fraction of traditional production cost.</p>
+      <div class="service-features">
+        <div class="service-feature">AI B-roll generation with precise prompting</div>
+        <div class="service-feature">Synthetic media integrated into real footage</div>
+        <div class="service-feature">Brand-consistent visual style across all content</div>
+        <div class="service-feature">Automated content pipelines for real estate & edu</div>
+        <div class="service-feature">Sora, Runway, Kling — best tool for the job</div>
+      </div>
+      <div class="service-outcome">Outcome: Cinematic production quality, zero crew cost</div>
+      <a href="#contact" class="service-cta-link">Get a proposal <span class="arr">→</span></a>
+    </div>
+    <div class="mockup-wrap reveal-left">
+      <div class="broll-mockup">
+        <div class="broll-strip">
+          <div class="broll-frame broll-frame-1"><div class="broll-frame-inner"><div class="broll-active-frame"></div></div><div class="broll-label">Scene 01</div></div>
+          <div class="broll-frame broll-frame-2"><div class="broll-frame-inner"><div class="broll-active-frame"></div></div><div class="broll-label">Scene 02</div></div>
+          <div class="broll-frame broll-frame-3"><div class="broll-frame-inner"><div class="broll-active-frame"></div></div><div class="broll-label">Scene 03</div></div>
+          <div class="broll-frame broll-frame-4"><div class="broll-frame-inner"><div class="broll-active-frame"></div></div><div class="broll-label">Scene 04</div></div>
+        </div>
+        <div class="broll-prompt">
+          <div class="broll-prompt-label">AI Prompt</div>
+          <div class="broll-prompt-text">"Cinematic aerial drone shot over <em>Mumbai skyline at golden hour</em>, shallow depth of field, anamorphic lens flare, <em>luxury real estate</em> aesthetic, 4K RAW"</div>
+          <div class="broll-gen-bar"><div class="broll-gen-fill"></div></div>
+          <div class="broll-tools">
+            <div class="broll-tool">Sora</div>
+            <div class="broll-tool">Runway Gen-3</div>
+            <div class="broll-tool">Kling AI</div>
+            <div class="broll-tool">Premiere Pro</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-bar reveal">
+  <div class="stat-item"><div class="stat-num">3s</div><div class="stat-label">To Hook or Lose Your Audience Forever</div></div>
+  <div class="stat-item"><div class="stat-num">24/7</div><div class="stat-label">Your AI Systems Running & Converting</div></div>
+  <div class="stat-item"><div class="stat-num">100%</div><div class="stat-label">Custom Strategy. No Templates. Ever.</div></div>
+  <div class="stat-item"><div class="stat-num">6</div><div class="stat-label">Services. Two Arms. One Engine.</div></div>
+</div>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="pricing-intro reveal">
+    <p class="sec-label">Investment</p>
+    <h2 class="sec-head">Simple<br/>Pricing</h2>
+    <p>No hidden fees. No surprise invoices. Every engagement starts with a <strong>clear scope and a clear number.</strong> These are starting ranges — your exact proposal is built around your brand and goals.</p>
+  </div>
+  <div class="pricing-grid">
+    <div class="pricing-card reveal">
+      <div class="pricing-card-tag">01 — Creative Arm</div>
+      <div class="pricing-card-name">Content<br/>& Editing</div>
+      <div class="pricing-range-label">Starting from</div>
+      <div class="pricing-range-value" data-inr="₹25,000" data-usd="$300">/mo</div>
+      <div class="pricing-range-sub">Short-form, long-form, or both</div>
+      <div class="pricing-divider"></div>
+      <div class="pricing-includes">What's included</div>
+      <ul class="pricing-features">
+        <li>Short-form Reels / Shorts / TikToks</li>
+        <li>Long-form YouTube editing</li>
+        <li>Hook writing & content structure</li>
+        <li>Motion graphics & captions</li>
+        <li>Thumbnail design</li>
+        <li>Platform-specific optimisation</li>
+      </ul>
+      <a href="#contact" class="pricing-cta-outline">Get a Proposal →</a>
+    </div>
+    <div class="pricing-card featured reveal d1">
+      <div class="pricing-card-tag">✦ Most Popular — Both Arms</div>
+      <div class="pricing-card-name">Full<br/>Package</div>
+      <div class="pricing-range-label">Starting from</div>
+      <div class="pricing-range-value" data-inr="₹75,000" data-usd="$900">/mo</div>
+      <div class="pricing-range-sub">Content + AI systems working together</div>
+      <div class="pricing-divider"></div>
+      <div class="pricing-includes">What's included</div>
+      <ul class="pricing-features">
+        <li>Everything in Content & Editing</li>
+        <li>AI marketing agent setup & deploy</li>
+        <li>Business automation architecture</li>
+        <li>Lead qualification system</li>
+        <li>Content funnel integration</li>
+        <li>Monthly strategy & optimisation calls</li>
+      </ul>
+      <a href="#contact" class="pricing-cta">Get a Proposal →</a>
+    </div>
+    <div class="pricing-card reveal d2">
+      <div class="pricing-card-tag">02 — Tech Arm</div>
+      <div class="pricing-card-name">AI &<br/>Automation</div>
+      <div class="pricing-range-label">Starting from</div>
+      <div class="pricing-range-value" data-inr="₹40,000" data-usd="$500">/mo</div>
+      <div class="pricing-range-sub">Agents, workflows & automation</div>
+      <div class="pricing-divider"></div>
+      <div class="pricing-includes">What's included</div>
+      <ul class="pricing-features">
+        <li>Agentic AI agent build & deployment</li>
+        <li>Custom automation workflows</li>
+        <li>CRM & lead system integration</li>
+        <li>Business process automation</li>
+        <li>AI B-roll & synthetic media</li>
+        <li>Ongoing maintenance & updates</li>
+      </ul>
+      <a href="#contact" class="pricing-cta-outline">Get a Proposal →</a>
+    </div>
+  </div>
+  <p class="pricing-note reveal" style="margin-top:32px;">
+    All prices are <span>starting points</span> — final scope is custom built for your brand.<br/>
+    Viewing in <span id="currencyLabel">USD ($)</span> · <span style="color:var(--muted);cursor:pointer;text-decoration:underline;" onclick="toggleCurrency()">Switch currency</span>
+  </p>
+</section>
+
+<!-- HOW -->
+<section id="how">
+  <div class="bg-num">04</div>
+  <p class="sec-label reveal">How We Work</p>
+  <h2 class="sec-head reveal" style="margin-bottom:72px">The<br/>Process</h2>
+  <div class="steps">
+    <div class="step reveal"><div class="step-n">01</div><h3 class="step-title">Diagnose</h3><p class="step-desc">We audit your brand, content, audience, and funnel in detail. Where is attention dropping? Where is conversion failing? What's working and why?</p><span class="step-arr">→</span></div>
+    <div class="step reveal d1"><div class="step-n">02</div><h3 class="step-title">Architect</h3><p class="step-desc">We map the full content and AI system together. Content calendar, editing style, platform strategy, AI agent setup — all planned before a single frame is cut.</p><span class="step-arr">→</span></div>
+    <div class="step reveal d2"><div class="step-n">03</div><h3 class="step-title">Build</h3><p class="step-desc">Premium editing and AI infrastructure built in parallel. Your Reels and long-form feed directly into automated funnels that convert the audience you build.</p><span class="step-arr">→</span></div>
+    <div class="step reveal d3"><div class="step-n">04</div><h3 class="step-title">Scale</h3><p class="step-desc">We track retention, click-through, and conversion. We cut what doesn't work and scale what does — until your content engine runs consistently and profitably.</p></div>
+  </div>
+</section>
+
+<!-- QUOTE -->
+<div class="quote-break reveal">
+  <div class="quote-bg">"</div>
+  <blockquote>"Great editing gets<br/>the view. <em>Great systems</em><br/>get the client."</blockquote>
+  <p class="q-attr">— Dashant Core Belief</p>
+</div>
+
+<!-- WHO -->
+<section id="who">
+  <div class="section-top reveal">
+    <div><p class="sec-label">Who We Help</p><h2 class="sec-head">Built For<br/>These Brands</h2></div>
+    <p class="sec-desc">We work with founders who understand that content and systems together are what scale a brand — not one without the other.</p>
+  </div>
+  <div class="who-grid">
+    <div class="who-card reveal"><div class="who-icon">🏗️</div><h3 class="who-name">Personal Brand Founders</h3><p class="who-desc">Coaches, consultants, and educators building on Instagram and YouTube who need premium editing, content strategy, and AI systems that turn followers into paying clients consistently.</p><span class="who-tag">Reels · YouTube · AI Funnels</span></div>
+    <div class="who-card reveal d1"><div class="who-icon">🏢</div><h3 class="who-name">Real Estate Brands</h3><p class="who-desc">Agencies and agents who need cinematic property content and fully automated lead generation pipelines — generating and qualifying leads even when they're not at a desk.</p><span class="who-tag">Property Video · Lead Gen · AI Agents</span></div>
+    <div class="who-card reveal d2"><div class="who-icon">⚡</div><h3 class="who-name">Growth-Stage Startups</h3><p class="who-desc">Founders who need to look and operate like a fully resourced brand — premium content that builds trust, and automation that handles the backend, with a lean team.</p><span class="who-tag">Content · Automation · AI Systems</span></div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="ghost">DASHANT</div>
+  <div class="contact-grid">
+    <div class="reveal-left">
+      <p class="sec-label">Let's Build</p>
+      <h2 class="contact-head">Start A<br/><mark>Project</mark></h2>
+      <p class="contact-sub">Tell us what you're building. We'll show you exactly how content and AI work together to grow it — and what that looks like for your specific brand.</p>
+      <div>
+        <div class="c-row"><span class="c-label">Email</span><span class="c-val"><a href="/cdn-cgi/l/email-protection#187c796b70587c796b7079766c367b7775"><span class="__cf_email__" data-cfemail="c3a7a2b0ab83a7a2b0aba2adb7eda0acae">[email&#160;protected]</span></a></span></div>
+        <div class="c-row"><span class="c-label">Location</span><span class="c-val">Pune, India — Working Globally</span></div>
+        <div class="c-row"><span class="c-label">Status</span><span class="c-val" style="color:var(--lime)">● Taking New Projects</span></div>
+        <div class="c-row"><span class="c-label">Response</span><span class="c-val">Within 24 Hours</span></div>
+      </div>
+    </div>
+    <div class="contact-form reveal-right">
+      <div class="f-row">
+        <div class="f-field"><label>Your Name</label><input type="text" placeholder="Full name"/></div>
+        <div class="f-field"><label>Email</label><input type="email" placeholder="you@company.com"/></div>
+      </div>
+      <div class="f-row">
+        <div class="f-field"><label>Brand / Company</label><input type="text" placeholder="What's the brand?"/></div>
+        <div class="f-field"><label>Primary Platform</label>
+          <select><option value="">Where is your audience?</option><option>Instagram / Reels</option><option>YouTube</option><option>LinkedIn</option><option>Multiple Platforms</option><option>Not yet — just starting</option></select>
+        </div>
+      </div>
+      <div class="f-row">
+        <div class="f-field"><label>Service Needed</label>
+          <select><option value="">What do you need?</option><option>Short-Form Content & Editing</option><option>Long-Form YouTube Production</option><option>Content Strategy + Editing</option><option>AI Agents & Automation</option><option>Full Package — Content + AI</option><option>Not Sure — Let's Talk</option></select>
+        </div>
+        <div class="f-field"><label>Monthly Budget</label>
+          <select id="budgetSelect"><option value="">Budget range</option></select>
+        </div>
+      </div>
+      <div class="f-row">
+        <div class="f-field f-full"><label>What Are You Building?</label>
+          <textarea placeholder="Tell us about your brand, what content you're currently posting, and what you want to achieve."></textarea>
+        </div>
+      </div>
+      <button class="f-btn">Send It Over →</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="f-logo">DASH<b>.</b>ANT</div>
+  <div class="f-copy">© 2026 Dashant. All rights reserved.</div>
+  <ul class="f-socials">
+    <li><a href="#">Instagram</a></li><li><a href="#">YouTube</a></li><li><a href="#">LinkedIn</a></li>
+  </ul>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// ── HAMBURGER MENU
+const hamburger=document.getElementById('hamburger');
+const mobileMenu=document.getElementById('mobileMenu');
+function closeMobileMenu(){
+  hamburger.classList.remove('open');
+  mobileMenu.classList.remove('open');
+  document.body.style.overflow='';
+}
+hamburger.addEventListener('click',()=>{
+  const isOpen=mobileMenu.classList.toggle('open');
+  hamburger.classList.toggle('open',isOpen);
+  document.body.style.overflow=isOpen?'hidden':'';
+});
+
+// ── CURSOR
+const cur=document.getElementById('cur'),ring=document.getElementById('cur-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+(function loop(){rx+=(mx-rx)*.1;ry+=(my-ry)*.1;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(loop);})();
+document.querySelectorAll('a,button,.pain-item,.who-card,.pricing-card,.svc,.step,.service-full').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cur.classList.add('hover');ring.classList.add('hover');});
+  el.addEventListener('mouseleave',()=>{cur.classList.remove('hover');ring.classList.remove('hover');});
+});
+
+// ── SCROLL PROGRESS BAR
+const progress=document.getElementById('progress');
+window.addEventListener('scroll',()=>{
+  const pct=(window.scrollY/(document.body.scrollHeight-window.innerHeight))*100;
+  progress.style.width=pct+'%';
+});
+
+// ── NAV SCROLL
+const navbar=document.getElementById('navbar');
+window.addEventListener('scroll',()=>{
+  navbar.classList.toggle('scrolled',window.scrollY>60);
+});
+
+// ── SCROLL REVEAL
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('on');}});
+},{threshold:.07,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.reveal,.reveal-left,.reveal-right,.reveal-scale').forEach(el=>obs.observe(el));
+
+// ── PARALLAX HERO
+window.addEventListener('scroll',()=>{
+  const y=window.scrollY;
+  const ghost=document.querySelector('.hero-ghost');
+  if(ghost)ghost.style.transform=`translateY(${y*0.15}px)`;
+  document.querySelectorAll('.orb').forEach((o,i)=>{
+    o.style.transform=`translateY(${y*(i===0?0.08:0.12)}px)`;
+  });
+});
+
+// ── CURRENCY
+let isIndia=false;
+const INR_BUDGETS=['Under ₹10,000','₹10,000 – ₹25,000','₹25,000 – ₹75,000','₹75,000 – ₹2,00,000','₹2,00,000+'];
+const USD_BUDGETS=['Under $200','$200 – $500','$500 – $1,500','$1,500 – $5,000','$5,000+'];
+
+function applyINR(){
+  document.querySelectorAll('.pricing-range-value').forEach(el=>{el.textContent=el.dataset.inr+'/mo';});
+  const sel=document.getElementById('budgetSelect');
+  sel.innerHTML='<option value="">Budget range</option>';
+  INR_BUDGETS.forEach(b=>{const o=document.createElement('option');o.textContent=b;sel.appendChild(o);});
+  document.getElementById('currencyLabel').textContent='INR (₹)';
+  showBadge('🇮🇳 Viewing in INR (₹)');
+}
+function applyUSD(){
+  document.querySelectorAll('.pricing-range-value').forEach(el=>{el.textContent=el.dataset.usd+'/mo';});
+  const sel=document.getElementById('budgetSelect');
+  sel.innerHTML='<option value="">Budget range</option>';
+  USD_BUDGETS.forEach(b=>{const o=document.createElement('option');o.textContent=b;sel.appendChild(o);});
+  document.getElementById('currencyLabel').textContent='USD ($)';
+  showBadge('🌍 Viewing in USD ($)');
+}
+function showBadge(text){
+  const b=document.getElementById('currencyBadge');
+  b.textContent=text;b.classList.add('show');
+  setTimeout(()=>b.classList.remove('show'),3000);
+}
+function toggleCurrency(){isIndia=!isIndia;isIndia?applyINR():applyUSD();}
+async function detectCurrency(){
+  try{const r=await fetch('https://ipapi.co/json/');const d=await r.json();if(d.country_code==='IN'){isIndia=true;applyINR();}else{applyUSD();}}
+  catch(e){applyUSD();}
+}
+detectCurrency();
+</script>
+</body>
+</html>
