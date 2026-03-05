@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -50,7 +51,7 @@ nav.scrolled{background:rgba(6,6,6,.95);backdrop-filter:blur(12px);padding:18px 
 .currency-badge.show{opacity:1;transform:translateY(0);}
 
 /* ── HERO ── */
-#hero{min-height:100vh;padding:0 64px 80px;display:flex;flex-direction:column;justify-content:flex-end;position:relative;overflow:hidden;}
+#hero{min-height:100vh;min-height:-webkit-fill-available;padding:0 64px 80px;display:flex;flex-direction:column;justify-content:flex-end;position:relative;overflow:hidden;}
 @media(max-width:768px){#hero{min-height:unset!important;justify-content:flex-start!important;padding:100px 28px 60px!important;}}
 @media(max-width:480px){#hero{min-height:unset!important;justify-content:flex-start!important;padding:90px 20px 56px!important;}}
 .hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(170,255,0,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(170,255,0,.04) 1px,transparent 1px);background-size:64px 64px;animation:gridPulse 8s ease-in-out infinite;mask-image:radial-gradient(ellipse 90% 80% at 50% 60%,black 20%,transparent 100%);}
@@ -462,7 +463,6 @@ footer{background:var(--black);padding:44px 64px;display:flex;justify-content:sp
   .nav-links{display:none;}
   .nav-btn{padding:10px 18px;font-size:9px;}
 
-  #hero{padding:100px 28px 64px;min-height:auto;justify-content:flex-start;}
   h1.hero-head{font-size:clamp(52px,10vw,80px);line-height:.92;}
   .hero-eyebrow{font-size:9px;}
   .hero-bottom{flex-direction:column;align-items:flex-start;margin-top:44px;gap:28px;}
@@ -549,7 +549,6 @@ footer{background:var(--black);padding:44px 64px;display:flex;justify-content:sp
   .logo{font-size:20px;letter-spacing:3px;}
   .nav-btn{display:none;}
 
-  #hero{padding:90px 20px 56px;min-height:auto;justify-content:flex-start;}
   h1.hero-head{font-size:clamp(44px,12vw,64px);}
   .hero-eyebrow{font-size:8px;letter-spacing:3px;}
   .hero-ghost{display:none;}
