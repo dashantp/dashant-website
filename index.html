@@ -51,7 +51,7 @@ nav.scrolled{background:rgba(6,6,6,.95);backdrop-filter:blur(12px);padding:18px 
 .currency-badge.show{opacity:1;transform:translateY(0);}
 
 /* ── HERO ── */
-#hero{min-height:100vh;min-height:-webkit-fill-available;padding:0 64px 80px;display:flex;flex-direction:column;justify-content:flex-end;position:relative;overflow:hidden;}
+#hero{min-height:100vh;min-height:100dvh;padding:0 64px 80px;display:flex;flex-direction:column;justify-content:flex-end;position:relative;overflow:hidden;}
 @media(max-width:768px){#hero{min-height:unset!important;justify-content:flex-start!important;padding:100px 28px 60px!important;}}
 @media(max-width:480px){#hero{min-height:unset!important;justify-content:flex-start!important;padding:90px 20px 56px!important;}}
 .hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(170,255,0,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(170,255,0,.04) 1px,transparent 1px);background-size:64px 64px;animation:gridPulse 8s ease-in-out infinite;mask-image:radial-gradient(ellipse 90% 80% at 50% 60%,black 20%,transparent 100%);}
@@ -1163,30 +1163,32 @@ footer{background:var(--black);padding:44px 64px;display:flex;justify-content:sp
       </div>
     </div>
     <div class="contact-form reveal-right">
+      <form action="https://formspree.io/f/xbdzjrkq" method="POST" style="display:flex;flex-direction:column;gap:2px;">
       <div class="f-row">
-        <div class="f-field"><label>Your Name</label><input type="text" placeholder="Full name"/></div>
-        <div class="f-field"><label>Email</label><input type="email" placeholder="you@company.com"/></div>
+        <div class="f-field"><label>Your Name</label><input type="text" name="name" placeholder="Full name" required/></div>
+        <div class="f-field"><label>Email</label><input type="email" name="email" placeholder="you@company.com" required/></div>
       </div>
       <div class="f-row">
-        <div class="f-field"><label>Brand / Company</label><input type="text" placeholder="What's the brand?"/></div>
+        <div class="f-field"><label>Brand / Company</label><input type="text" name="brand" placeholder="What's the brand?"/></div>
         <div class="f-field"><label>Primary Platform</label>
-          <select><option value="">Where is your audience?</option><option>Instagram / Reels</option><option>YouTube</option><option>LinkedIn</option><option>Multiple Platforms</option><option>Not yet — just starting</option></select>
+          <select name="platform"><option value="">Where is your audience?</option><option>Instagram / Reels</option><option>YouTube</option><option>LinkedIn</option><option>Multiple Platforms</option><option>Not yet — just starting</option></select>
         </div>
       </div>
       <div class="f-row">
         <div class="f-field"><label>Service Needed</label>
-          <select><option value="">What do you need?</option><option>Short-Form Content & Editing</option><option>Long-Form YouTube Production</option><option>Content Strategy + Editing</option><option>AI Agents & Automation</option><option>Full Package — Content + AI</option><option>Not Sure — Let's Talk</option></select>
+          <select name="service"><option value="">What do you need?</option><option>Short-Form Content & Editing</option><option>Long-Form YouTube Production</option><option>Content Strategy + Editing</option><option>AI Agents & Automation</option><option>Full Package — Content + AI</option><option>Not Sure — Let's Talk</option></select>
         </div>
         <div class="f-field"><label>Monthly Budget</label>
-          <select id="budgetSelect"><option value="">Budget range</option></select>
+          <select id="budgetSelect" name="budget"><option value="">Budget range</option></select>
         </div>
       </div>
       <div class="f-row">
         <div class="f-field f-full"><label>What Are You Building?</label>
-          <textarea placeholder="Tell us about your brand, what content you're currently posting, and what you want to achieve."></textarea>
+          <textarea name="message" placeholder="Tell us about your brand, what content you're currently posting, and what you want to achieve."></textarea>
         </div>
       </div>
-      <button class="f-btn">Send It Over →</button>
+      <button type="submit" class="f-btn">Send It Over →</button>
+      </form>
     </div>
   </div>
 </section>
@@ -1196,7 +1198,7 @@ footer{background:var(--black);padding:44px 64px;display:flex;justify-content:sp
   <div class="f-logo">DASH<b>.</b>ANT</div>
   <div class="f-copy">© 2026 Dashant. All rights reserved.</div>
   <ul class="f-socials">
-    <li><a href="#">Instagram</a></li><li><a href="#">YouTube</a></li><li><a href="#">LinkedIn</a></li>
+    <li><a href="https://www.instagram.com/dashant.___/" target="_blank">Instagram</a></li><li><a href="#" target="_blank">YouTube</a></li><li><a href="https://www.linkedin.com/in/dashant-panigrahi-a357a3204/" target="_blank">LinkedIn</a></li>
   </ul>
 </footer>
 
@@ -1259,21 +1261,24 @@ let isIndia=false;
 const INR_BUDGETS=['Under ₹10,000','₹10,000 – ₹25,000','₹25,000 – ₹75,000','₹75,000 – ₹2,00,000','₹2,00,000+'];
 const USD_BUDGETS=['Under $200','$200 – $500','$500 – $1,500','$1,500 – $5,000','$5,000+'];
 
-function applyINR(){
+// Set USD instantly on load — no blank flash
+applyUSD(true);
+
+function applyINR(silent){
   document.querySelectorAll('.pricing-range-value').forEach(el=>{el.textContent=el.dataset.inr+'/mo';});
   const sel=document.getElementById('budgetSelect');
   sel.innerHTML='<option value="">Budget range</option>';
   INR_BUDGETS.forEach(b=>{const o=document.createElement('option');o.textContent=b;sel.appendChild(o);});
   document.getElementById('currencyLabel').textContent='INR (₹)';
-  showBadge('🇮🇳 Viewing in INR (₹)');
+  if(!silent)showBadge('🇮🇳 Viewing in INR (₹)');
 }
-function applyUSD(){
+function applyUSD(silent){
   document.querySelectorAll('.pricing-range-value').forEach(el=>{el.textContent=el.dataset.usd+'/mo';});
   const sel=document.getElementById('budgetSelect');
   sel.innerHTML='<option value="">Budget range</option>';
   USD_BUDGETS.forEach(b=>{const o=document.createElement('option');o.textContent=b;sel.appendChild(o);});
   document.getElementById('currencyLabel').textContent='USD ($)';
-  showBadge('🌍 Viewing in USD ($)');
+  if(!silent)showBadge('🌍 Viewing in USD ($)');
 }
 function showBadge(text){
   const b=document.getElementById('currencyBadge');
@@ -1282,8 +1287,8 @@ function showBadge(text){
 }
 function toggleCurrency(){isIndia=!isIndia;isIndia?applyINR():applyUSD();}
 async function detectCurrency(){
-  try{const r=await fetch('https://ipapi.co/json/');const d=await r.json();if(d.country_code==='IN'){isIndia=true;applyINR();}else{applyUSD();}}
-  catch(e){applyUSD();}
+  try{const r=await fetch('https://ipapi.co/json/');const d=await r.json();if(d.country_code==='IN'){isIndia=true;applyINR(true);}}
+  catch(e){}
 }
 detectCurrency();
 </script>
