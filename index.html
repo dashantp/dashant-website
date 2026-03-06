@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30,11 +31,11 @@ body::after{content:'';position:fixed;inset:0;background:url("data:image/svg+xml
 #progress{position:fixed;top:0;left:0;height:2px;background:var(--lime);z-index:10000;width:0%;transition:width .1s linear;}
 
 /* ── NAV ── */
-nav{position:fixed;top:0;left:0;right:0;z-index:500;padding:28px 64px;display:flex;align-items:center;justify-content:space-between;transition:background .4s,padding .4s;}
-nav.scrolled{background:rgba(6,6,6,.95);backdrop-filter:blur(12px);padding:18px 64px;}
-.logo-img-link{display:flex;align-items:center;text-decoration:none;}
-.nav-logo-img{height:150px;width:auto;object-fit:contain;filter:brightness(1);}
-.footer-logo-img{height:56px;width:auto;object-fit:contain;}
+nav{position:fixed;top:0;left:0;right:0;z-index:500;padding:4px 64px;display:flex;align-items:center;justify-content:space-between;transition:background .4s,padding .4s;}
+nav.scrolled{background:rgba(6,6,6,.95);backdrop-filter:blur(12px);padding:4px 64px;}
+.logo-img-link{display:flex;align-items:center;text-decoration:none;flex-shrink:0;}
+.nav-logo-img{height:120px;width:auto;object-fit:contain;display:block;}
+.footer-logo-img{height:120px;width:auto;object-fit:contain;}
 /* keep old logo style as fallback */
 .nav-links{display:flex;gap:36px;list-style:none;}
 .nav-links a{font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s;position:relative;}
@@ -51,7 +52,7 @@ nav.scrolled{background:rgba(6,6,6,.95);backdrop-filter:blur(12px);padding:18px 
 .currency-badge.show{opacity:1;transform:translateY(0);}
 
 /* ── HERO ── */
-#hero{min-height:100vh;min-height:100dvh;padding:0 64px 80px;display:flex;flex-direction:column;justify-content:flex-end;position:relative;overflow:hidden;}
+#hero{min-height:100vh;min-height:100dvh;padding:0 64px 80px;padding-top:130px;display:flex;flex-direction:column;justify-content:flex-end;position:relative;overflow:hidden;}
 @media(max-width:768px){#hero{min-height:unset!important;justify-content:flex-start!important;padding:100px 28px 60px!important;}}
 @media(max-width:480px){#hero{min-height:unset!important;justify-content:flex-start!important;padding:90px 20px 56px!important;}}
 .hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(170,255,0,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(170,255,0,.04) 1px,transparent 1px);background-size:64px 64px;animation:gridPulse 8s ease-in-out infinite;mask-image:radial-gradient(ellipse 90% 80% at 50% 60%,black 20%,transparent 100%);}
@@ -440,7 +441,7 @@ footer{background:var(--black);padding:44px 64px;display:flex;justify-content:sp
    TABLET LANDSCAPE — 1024px and below
 ══════════════════════════════════════ */
 @media(max-width:1024px){
-  nav{padding:24px 40px;}
+  nav{padding:10px 40px;}
   #hero,#pain,#content-marketing,#services-ai,#pricing,#how,#who,#contact{padding:100px 40px;}
   .service-full{grid-template-columns:1fr;gap:56px;}
   .service-full.reverse{direction:ltr;}
@@ -459,7 +460,8 @@ footer{background:var(--black);padding:44px 64px;display:flex;justify-content:sp
 @media(max-width:768px){
   #cur,#cur-ring{display:none;}
   body{cursor:auto;}
-  nav{padding:20px 28px;}
+  nav{padding:6px 28px;}
+  .nav-logo-img{height:80px;}
   .nav-links{display:none;}
   .nav-btn{padding:10px 18px;font-size:9px;}
 
