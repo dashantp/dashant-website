@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -33,8 +34,8 @@ body::after{content:'';position:fixed;inset:0;background:url("data:image/svg+xml
 /* ── NAV ── */
 nav{position:fixed;top:0;left:0;right:0;z-index:500;padding:4px 64px;display:flex;align-items:center;justify-content:space-between;transition:background .4s,padding .4s;}
 nav.scrolled{background:rgba(6,6,6,.95);backdrop-filter:blur(12px);padding:4px 64px;}
-.logo-img-link{display:flex;align-items:center;text-decoration:none;flex-shrink:0;}
-.nav-logo-img{height:120px;width:auto;object-fit:contain;display:block;}
+.logo-img-link{display:flex;align-items:center;text-decoration:none;flex-shrink:0;margin-right:auto;}
+.nav-logo-img{height:140px;width:auto;object-fit:contain;display:block;}
 .footer-logo-img{height:120px;width:auto;object-fit:contain;}
 /* keep old logo style as fallback */
 .nav-links{display:flex;gap:36px;list-style:none;}
@@ -52,7 +53,7 @@ nav.scrolled{background:rgba(6,6,6,.95);backdrop-filter:blur(12px);padding:4px 6
 .currency-badge.show{opacity:1;transform:translateY(0);}
 
 /* ── HERO ── */
-#hero{min-height:100vh;min-height:100dvh;padding:0 64px 80px;padding-top:130px;display:flex;flex-direction:column;justify-content:flex-end;position:relative;overflow:hidden;}
+#hero{min-height:100vh;min-height:100dvh;padding:0 64px 80px;padding-top:130px;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;position:relative;overflow:hidden;}
 @media(max-width:768px){#hero{min-height:unset!important;justify-content:flex-start!important;padding:100px 28px 60px!important;}}
 @media(max-width:480px){#hero{min-height:unset!important;justify-content:flex-start!important;padding:90px 20px 56px!important;}}
 .hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(170,255,0,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(170,255,0,.04) 1px,transparent 1px);background-size:64px 64px;animation:gridPulse 8s ease-in-out infinite;mask-image:radial-gradient(ellipse 90% 80% at 50% 60%,black 20%,transparent 100%);}
@@ -66,18 +67,18 @@ nav.scrolled{background:rgba(6,6,6,.95);backdrop-filter:blur(12px);padding:4px 6
 .orb-2{width:300px;height:300px;background:rgba(170,255,0,.04);bottom:20%;left:10%;--dur:18s;animation-delay:-6s;}
 @keyframes orbFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-40px) scale(1.05)}}
 
-.hero-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--lime);margin-bottom:28px;display:flex;align-items:center;gap:12px;opacity:0;animation:slideUp .8s var(--ease-out-expo) .2s forwards;}
+.hero-eyebrow{justify-content:center;font-family:var(--mono);font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--lime);margin-bottom:28px;display:flex;align-items:center;gap:12px;opacity:0;animation:slideUp .8s var(--ease-out-expo) .2s forwards;}
 .hero-eyebrow::before{content:'';width:28px;height:1px;background:var(--lime);}
 .hero-dot{display:inline-block;width:6px;height:6px;background:var(--lime);border-radius:50%;animation:blink 2s ease-in-out infinite;}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 
-h1.hero-head{font-family:var(--display);font-size:clamp(68px,10.5vw,150px);line-height:.9;text-transform:uppercase;letter-spacing:-.5px;max-width:1100px;opacity:0;animation:slideUp .8s var(--ease-out-expo) .4s forwards;}
+h1.hero-head{font-family:var(--display);font-size:clamp(68px,10.5vw,150px);line-height:.9;text-transform:uppercase;letter-spacing:-.5px;max-width:1100px;opacity:0;animation:slideUp .8s var(--ease-out-expo) .4s forwards;text-align:center;margin-left:auto;margin-right:auto;}
 h1.hero-head mark{background:none;color:var(--lime);position:relative;display:inline-block;}
 h1.hero-head mark::after{content:'';position:absolute;bottom:4px;left:0;right:0;height:4px;background:var(--lime);opacity:.3;transform:scaleX(0);animation:lineReveal 1s var(--ease-out-expo) 1.2s forwards;}
 @keyframes lineReveal{to{transform:scaleX(1)}}
 
-.hero-bottom{display:flex;justify-content:space-between;align-items:flex-end;margin-top:64px;gap:40px;opacity:0;animation:slideUp .8s var(--ease-out-expo) .6s forwards;position:relative;z-index:1;}
-.hero-sub{font-size:17px;line-height:1.75;color:#888;max-width:440px;}
+.hero-bottom{display:flex;flex-direction:column;align-items:center;justify-content:center;margin-top:64px;gap:32px;opacity:0;animation:slideUp .8s var(--ease-out-expo) .6s forwards;position:relative;z-index:1;}
+.hero-sub{font-size:17px;line-height:1.75;color:#888;max-width:540px;text-align:center;}
 .hero-sub strong{color:var(--white);}
 .hero-cta{display:inline-flex;align-items:center;gap:14px;font-family:var(--display);font-size:20px;letter-spacing:3px;text-transform:uppercase;color:var(--black);background:var(--lime);padding:22px 44px;text-decoration:none;flex-shrink:0;position:relative;overflow:hidden;transition:color .3s;}
 .hero-cta::before{content:'';position:absolute;inset:0;background:var(--white);transform:translateX(-101%);transition:transform .4s var(--ease-out-expo);}
@@ -1319,19 +1320,26 @@ nav .nav-links ~ .nav-btn,
 nav .nav-links + .nav-btn {
   right: 64px;
 }
-.logo-img-link {
-  margin: 0 auto;
-  position: relative;
-  z-index: 1;
-}
+
 
 /* ── PRICING LOCK OVERLAY ── */
 #pricing-section-wrapper {
   position: relative;
 }
+/* When locked: hide the pricing section content so no empty space shows */
+#pricing-section-wrapper.locked > #pricing {
+  visibility: hidden;
+  height: 0;
+  overflow: hidden;
+  padding: 0;
+  margin: 0;
+}
+#pricing-section-wrapper.locked {
+  /* Lock UI takes natural height - no giant black void */
+}
 #pricing-lock-overlay {
-  position: absolute;
-  inset: 0;
+  position: relative;
+  inset: unset;
   z-index: 100;
   background: rgba(6,6,6,0.96);
   backdrop-filter: blur(18px);
@@ -1341,24 +1349,26 @@ nav .nav-links + .nav-btn {
   align-items: center;
   justify-content: center;
   gap: 0;
-  min-height: 100%;
+  padding: 80px 64px;
 }
 .lock-inner {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px; /* Reduced from 28px */
-  max-width: 480px;
+  gap: 20px;
+  max-width: 520px;
   width: 100%;
-  padding: 0 24px;
+  padding: 0;
+  text-align: center;
 }
 .lock-icon-wrap {
   position: relative;
-  width: 80px;
-  height: 80px;
+  width: 64px;
+  height: 64px;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-bottom: 4px;
 }
 .lock-icon-wrap::before {
   content: '';
@@ -1678,32 +1688,6 @@ nav .nav-links + .nav-btn {
   // Change this to your actual password
   const PRICING_PASSWORD = 'dashant2026';
 
-  // ── CENTER NAV LOGO ──
-  function centerNav() {
-    const nav = document.querySelector('nav');
-    if (!nav) return;
-    nav.style.cssText += 'justify-content:center!important;';
-    const logo = nav.querySelector('.logo-img-link');
-    if (logo) {
-      logo.style.cssText += 'position:relative;z-index:1;';
-    }
-    // Keep links & button absolutely positioned right
-    const links = nav.querySelector('.nav-links');
-    const btn = nav.querySelector('.nav-btn');
-    if (links) {
-      links.style.cssText += 'position:absolute;right:64px;top:50%;transform:translateY(-50%);';
-    }
-    if (btn && !links) {
-      btn.style.cssText += 'position:absolute;right:64px;top:50%;transform:translateY(-50%);';
-    }
-    if (btn && links) {
-      btn.style.cssText += 'position:absolute;right:64px;top:50%;transform:translateY(-50%);';
-    }
-    // Mobile: hamburger stays right
-    const hamburger = document.getElementById('hamburger');
-    if (hamburger) hamburger.style.cssText += 'position:absolute;right:28px;top:50%;transform:translateY(-50%);';
-  }
-
   // ── WRAP PRICING SECTION ──
   function wrapPricingSection() {
     // Find section with id="pricing" or containing .pricing-card elements
@@ -1730,7 +1714,7 @@ nav .nav-links + .nav-btn {
     const overlay = document.createElement('div');
     overlay.id = 'pricing-lock-overlay';
     overlay.innerHTML = `
-      <div class="lock-inner">
+<div class="lock-inner">
         <div class="lock-icon-wrap">
           <svg class="lock-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
@@ -1767,6 +1751,7 @@ nav .nav-links + .nav-btn {
       </div>
     `;
     wrapper.appendChild(overlay);
+  wrapper.classList.add('locked');
 
     // Eye toggle
     document.getElementById('lockEyeBtn').addEventListener('click', function() {
@@ -1796,6 +1781,7 @@ nav .nav-links + .nav-btn {
       if (val === PRICING_PASSWORD) {
         errEl.classList.remove('show');
         overlay.classList.add('unlocking');
+        wrapper.classList.remove('locked');
         setTimeout(() => {
           overlay.style.display = 'none';
           // Save session
@@ -1890,8 +1876,7 @@ nav .nav-links + .nav-btn {
 
   // ── INIT ──
   function init() {
-    centerNav();
-    const wrapper = wrapPricingSection();
+        const wrapper = wrapPricingSection();
     if (wrapper) {
       buildLockOverlay(wrapper);
       buildPrivacyNotice(wrapper);
