@@ -1528,7 +1528,7 @@ nav .nav-links + .nav-btn {
   background: #0a0a0a;
   border-top: 1px solid #1e1e1e;
   border-bottom: 1px solid #1e1e1e;
-  padding: 80px 64px;
+  padding: 40px 32px; /* Changed from 80px 64px */
   position: relative;
   overflow: hidden;
 }
@@ -1572,12 +1572,12 @@ nav .nav-links + .nav-btn {
 .ppn-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 48px 80px;
-  margin-top: 48px;
+  gap: 24px 40px; /* Changed from 48px 80px */
+  margin-top: 32px; /* Changed from 48px */
 }
 @media(max-width:768px){
-  .ppn-grid { grid-template-columns: 1fr; gap: 36px; }
-  #pricing-privacy-notice { padding: 60px 28px; }
+  .ppn-grid { grid-template-columns: 1fr; gap: 24px; /* Changed from 36px */ }
+  #pricing-privacy-notice { padding: 40px 20px; /* Changed from 60px 28px */ }
 }
 .ppn-heading {
   font-family: 'Bebas Neue', sans-serif;
@@ -1639,11 +1639,11 @@ nav .nav-links + .nav-btn {
   width: 48px;
   height: 1px;
   background: linear-gradient(90deg, #aaff00, transparent);
-  margin: 40px 0;
+  margin: 24px 0; /* Changed from 40px 0 */
 }
 .ppn-legal-bar {
-  margin-top: 56px;
-  padding-top: 32px;
+  margin-top: 32px; /* Changed from 56px */
+  padding-top: 24px; /* Changed from 32px */
   border-top: 1px solid #1a1a1a;
   display: flex;
   align-items: center;
